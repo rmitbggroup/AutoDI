@@ -1,0 +1,11 @@
+Sort_39;41727.62;root;;Column#27
+└─Projection_41;41727.62;root;;Column#27, Column#28, Column#29
+  └─HashAgg_42;41727.62;root;;group by:Column#33, funcs:count(1)->Column#28, funcs:sum(Column#31)->Column#29, funcs:firstrow(Column#32)->Column#27
+    └─Projection_51;43264.37;root;;test.customer.c_acctbal, substring(test.customer.c_phone, 1, 2)->Column#32, substring(test.customer.c_phone, 1, 2)->Column#33
+      └─HashJoin_43;43264.37;root;;anti semi join, equal:[eq(test.customer.c_custkey, test.orders.o_custkey)]
+        ├─TableReader_49(Build);1500000.00;root;;data:TableFullScan_48
+        │ └─TableFullScan_48;1500000.00;cop[tikv];table:orders;keep order:false
+        └─Selection_47(Probe);54080.46;root;;in(substring(test.customer.c_phone, 1, 2), "20", "40", "22", "30", "39", "42", "21")
+          └─TableReader_46;67600.58;root;;data:Selection_45
+            └─Selection_45;67600.58;cop[tikv];;gt(test.customer.c_acctbal, 5001.433377)
+              └─TableFullScan_44;150000.00;cop[tikv];table:customer;keep order:false

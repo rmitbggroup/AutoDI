@@ -1,0 +1,23 @@
+Sort_26;2406.00;root;;test.nation.n_name, Column#53:desc
+└─Projection_28;2406.00;root;;test.nation.n_name, Column#53, Column#55
+  └─HashAgg_29;2406.00;root;;group by:Column#67, Column#68, funcs:sum(Column#64)->Column#55, funcs:firstrow(Column#65)->test.nation.n_name, funcs:firstrow(Column#66)->Column#53
+    └─Projection_118;4940954.46;root;;minus(mul(test.lineitem.l_extendedprice, minus(1, test.lineitem.l_discount)), mul(test.partsupp.ps_supplycost, test.lineitem.l_quantity))->Column#64, test.nation.n_name, extract(YEAR, test.orders.o_orderdate)->Column#66, test.nation.n_name, extract(YEAR, test.orders.o_orderdate)->Column#68
+      └─Projection_30;4940954.46;root;;test.lineitem.l_quantity, test.lineitem.l_extendedprice, test.lineitem.l_discount, test.partsupp.ps_supplycost, test.orders.o_orderdate, test.nation.n_name
+        └─HashJoin_41;4940954.46;root;;inner join, equal:[eq(test.lineitem.l_orderkey, test.orders.o_orderkey)]
+          ├─TableReader_116(Build);1500000.00;root;;data:TableFullScan_115
+          │ └─TableFullScan_115;1500000.00;cop[tikv];table:orders;keep order:false
+          └─HashJoin_76(Probe);4900161.94;root;;inner join, equal:[eq(test.lineitem.l_suppkey, test.partsupp.ps_suppkey) eq(test.lineitem.l_partkey, test.partsupp.ps_partkey)]
+            ├─TableReader_114(Build);800000.00;root;;data:TableFullScan_113
+            │ └─TableFullScan_113;800000.00;cop[tikv];table:partsupp;keep order:false
+            └─HashJoin_89(Probe);4875073.11;root;;inner join, equal:[eq(test.lineitem.l_partkey, test.part.p_partkey)]
+              ├─TableReader_112(Build);160000.00;root;;data:Selection_111
+              │ └─Selection_111;160000.00;cop[tikv];;like(test.part.p_name, "%dim%", 92)
+              │   └─TableFullScan_110;200000.00;cop[tikv];table:part;keep order:false
+              └─HashJoin_92(Probe);6001215.00;root;;inner join, equal:[eq(test.supplier.s_suppkey, test.lineitem.l_suppkey)]
+                ├─HashJoin_103(Build);10000.00;root;;inner join, equal:[eq(test.nation.n_nationkey, test.supplier.s_nationkey)]
+                │ ├─TableReader_107(Build);25.00;root;;data:TableFullScan_106
+                │ │ └─TableFullScan_106;25.00;cop[tikv];table:nation;keep order:false
+                │ └─TableReader_105(Probe);10000.00;root;;data:TableFullScan_104
+                │   └─TableFullScan_104;10000.00;cop[tikv];table:supplier;keep order:false
+                └─TableReader_109(Probe);6001215.00;root;;data:TableFullScan_108
+                  └─TableFullScan_108;6001215.00;cop[tikv];table:lineitem;keep order:false

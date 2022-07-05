@@ -1,0 +1,25 @@
+HashAgg_29;1.00;root;;funcs:min(test.char_name.name)->Column#43, funcs:min(test.title.title)->Column#44
+└─Projection_31;12616240.95;root;;test.char_name.name, test.title.title
+  └─HashJoin_42;12616240.95;root;;inner join, equal:[eq(test.cast_info.person_role_id, test.char_name.id)]
+    ├─TableReader_201(Build);3140339.00;root;;data:TableFullScan_200
+    │ └─TableFullScan_200;3140339.00;cop[tikv];table:chn;keep order:false
+    └─HashJoin_63(Probe);12532986.77;root;;inner join, equal:[eq(test.cast_info.role_id, test.role_type.id)]
+      ├─TableReader_199(Build);12.00;root;;data:TableFullScan_198
+      │ └─TableFullScan_198;12.00;cop[tikv];table:rt;keep order:false
+      └─HashJoin_79(Probe);12532986.77;root;;inner join, equal:[eq(test.title.id, test.cast_info.movie_id) eq(test.movie_companies.movie_id, test.cast_info.movie_id)]
+        ├─IndexJoin_87(Build);810601.71;root;;inner join, inner:TableReader_83, outer key:test.movie_companies.movie_id, inner key:test.title.id, equal cond:eq(test.movie_companies.movie_id, test.title.id)
+        │ ├─HashJoin_133(Build);810255.45;root;;inner join, equal:[eq(test.movie_companies.company_id, test.company_name.id)]
+        │ │ ├─TableReader_187(Build);72166.00;root;;data:Selection_186
+        │ │ │ └─Selection_186;72166.00;cop[tikv];;eq(test.company_name.country_code, "[us]")
+        │ │ │   └─TableFullScan_185;234997.00;cop[tikv];table:cn;keep order:false
+        │ │ └─HashJoin_174(Probe);2609129.00;root;;inner join, equal:[eq(test.company_type.id, test.movie_companies.company_type_id)]
+        │ │   ├─TableReader_182(Build);4.00;root;;data:TableFullScan_181
+        │ │   │ └─TableFullScan_181;4.00;cop[tikv];table:ct;keep order:false
+        │ │   └─TableReader_184(Probe);2609129.00;root;;data:TableFullScan_183
+        │ │     └─TableFullScan_183;2609129.00;cop[tikv];table:mc;keep order:false
+        │ └─TableReader_83(Probe);0.69;root;;data:Selection_82
+        │   └─Selection_82;0.69;cop[tikv];;gt(test.title.production_year, 1990)
+        │     └─TableRangeScan_81;1.00;cop[tikv];table:t;range: decided by [test.movie_companies.movie_id], keep order:false
+        └─TableReader_193(Probe);28995475.20;root;;data:Selection_192
+          └─Selection_192;28995475.20;cop[tikv];;like(test.cast_info.note, "%(producer)%", 92), not(isnull(test.cast_info.person_role_id))
+            └─TableFullScan_191;36244344.00;cop[tikv];table:ci;keep order:false

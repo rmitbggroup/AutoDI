@@ -1,0 +1,14 @@
+Sort_14;1.00;root;;Column#23:desc, test.part.p_brand, test.part.p_type, test.part.p_size
+└─Projection_16;1.00;root;;test.part.p_brand, test.part.p_type, test.part.p_size, Column#23
+  └─HashAgg_17;1.00;root;;group by:test.part.p_brand, test.part.p_size, test.part.p_type, funcs:count(distinct test.partsupp.ps_suppkey)->Column#23, funcs:firstrow(test.part.p_brand)->test.part.p_brand, funcs:firstrow(test.part.p_type)->test.part.p_type, funcs:firstrow(test.part.p_size)->test.part.p_size
+    └─IndexJoin_24;2768.65;root;;anti semi join, inner:TableReader_20, outer key:test.partsupp.ps_suppkey, inner key:test.supplier.s_suppkey, equal cond:eq(test.partsupp.ps_suppkey, test.supplier.s_suppkey)
+      ├─Projection_30(Build);3460.82;root;;test.partsupp.ps_suppkey, test.part.p_brand, test.part.p_type, test.part.p_size
+      │ └─IndexHashJoin_36;3460.82;root;;inner join, inner:IndexReader_33, outer key:test.part.p_partkey, inner key:test.partsupp.ps_partkey, equal cond:eq(test.part.p_partkey, test.partsupp.ps_partkey)
+      │   ├─TableReader_61(Build);852.05;root;;data:Selection_60
+      │   │ └─Selection_60;852.05;cop[tikv];;in(test.part.p_size, 48, 19, 12, 4, 41, 7, 21, 39), ne(test.part.p_brand, "Brand#34"), not(like(test.part.p_type, "LARGE BRUSHED%", 92))
+      │   │   └─TableFullScan_59;200000.00;cop[tikv];table:part;keep order:false
+      │   └─IndexReader_33(Probe);4.06;root;;index:IndexRangeScan_32
+      │     └─IndexRangeScan_32;4.06;cop[tikv];table:partsupp, index:PRIMARY(PS_PARTKEY, PS_SUPPKEY);range: decided by [eq(test.partsupp.ps_partkey, test.part.p_partkey)], keep order:false
+      └─TableReader_20(Probe);0.80;root;;data:Selection_19
+        └─Selection_19;0.80;cop[tikv];;like(test.supplier.s_comment, "%Customer%Complaints%", 92)
+          └─TableRangeScan_18;1.00;cop[tikv];table:supplier;range: decided by [test.partsupp.ps_suppkey], keep order:false

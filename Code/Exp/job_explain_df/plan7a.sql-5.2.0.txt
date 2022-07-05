@@ -1,0 +1,35 @@
+HashAgg_33;1.00;root;;funcs:min(test.name.name)->Column#50, funcs:min(test.title.title)->Column#51
+└─Projection_35;100.16;root;;test.name.name, test.title.title
+  └─IndexHashJoin_42;100.16;root;;inner join, inner:IndexLookUp_39, outer key:test.person_info.person_id, inner key:test.aka_name.person_id, equal cond:eq(test.cast_info.person_id, test.aka_name.person_id), eq(test.name.id, test.aka_name.person_id), eq(test.person_info.person_id, test.aka_name.person_id)
+    ├─HashJoin_63(Build);65.14;root;;inner join, equal:[eq(test.person_info.info_type_id, test.info_type.id)]
+    │ ├─TableReader_190(Build);0.11;root;;data:Selection_189
+    │ │ └─Selection_189;0.11;cop[tikv];;eq(test.info_type.info, "mini biography")
+    │ │   └─TableFullScan_188;113.00;cop[tikv];table:it;keep order:false
+    │ └─IndexHashJoin_71(Probe);576.42;root;;inner join, inner:IndexLookUp_68, outer key:test.name.id, inner key:test.person_info.person_id, equal cond:eq(test.cast_info.person_id, test.person_info.person_id), eq(test.name.id, test.person_info.person_id)
+    │   ├─IndexJoin_87(Build);106.79;root;;inner join, inner:TableReader_83, outer key:test.cast_info.person_id, inner key:test.name.id, equal cond:eq(test.cast_info.person_id, test.name.id)
+    │   │ ├─IndexHashJoin_99(Build);521.99;root;;inner join, inner:IndexLookUp_96, outer key:test.title.id, inner key:test.cast_info.movie_id, equal cond:eq(test.movie_link.linked_movie_id, test.cast_info.movie_id), eq(test.title.id, test.cast_info.movie_id)
+    │   │ │ ├─IndexJoin_114(Build);33.76;root;;inner join, inner:TableReader_110, outer key:test.movie_link.linked_movie_id, inner key:test.title.id, equal cond:eq(test.movie_link.linked_movie_id, test.title.id)
+    │   │ │ │ ├─IndexHashJoin_145(Build);33.75;root;;inner join, inner:IndexLookUp_142, outer key:test.link_type.id, inner key:test.movie_link.link_type_id, equal cond:eq(test.link_type.id, test.movie_link.link_type_id)
+    │   │ │ │ │ ├─TableReader_174(Build);0.02;root;;data:Selection_173
+    │   │ │ │ │ │ └─Selection_173;0.02;cop[tikv];;eq(test.link_type.link, "features")
+    │   │ │ │ │ │   └─TableFullScan_172;18.00;cop[tikv];table:lt;keep order:false
+    │   │ │ │ │ └─IndexLookUp_142(Probe);1874.81;root;;
+    │   │ │ │ │   ├─IndexRangeScan_140(Build);1874.81;cop[tikv];table:ml, index:link_type_id_movie_link(link_type_id);range: decided by [eq(test.movie_link.link_type_id, test.link_type.id)], keep order:false
+    │   │ │ │ │   └─TableRowIDScan_141(Probe);1874.81;cop[tikv];table:ml;keep order:false
+    │   │ │ │ └─TableReader_110(Probe);0.13;root;;data:Selection_109
+    │   │ │ │   └─Selection_109;0.13;cop[tikv];;ge(test.title.production_year, 1980), le(test.title.production_year, 1995)
+    │   │ │ │     └─TableRangeScan_108;1.00;cop[tikv];table:t;range: decided by [test.movie_link.linked_movie_id], keep order:false
+    │   │ │ └─IndexLookUp_96(Probe);15.46;root;;
+    │   │ │   ├─IndexRangeScan_94(Build);15.46;cop[tikv];table:ci, index:movie_id_cast_info(movie_id);range: decided by [eq(test.cast_info.movie_id, test.title.id)], keep order:false
+    │   │ │   └─TableRowIDScan_95(Probe);15.46;cop[tikv];table:ci;keep order:false
+    │   │ └─TableReader_83(Probe);0.00;root;;data:Selection_82
+    │   │   └─Selection_82;0.00;cop[tikv];;ge(test.name.name_pcode_cf, "A"), le(test.name.name_pcode_cf, "F"), or(eq(test.name.gender, "m"), and(eq(test.name.gender, "f"), like(test.name.name, "B%", 92)))
+    │   │     └─TableRangeScan_81;1.00;cop[tikv];table:n;range: decided by [test.cast_info.person_id], keep order:false
+    │   └─IndexLookUp_68(Probe);5.40;root;;
+    │     ├─IndexRangeScan_65(Build);5397.74;cop[tikv];table:pi, index:person_id_person_info(person_id);range: decided by [eq(test.person_info.person_id, test.name.id)], keep order:false
+    │     └─Selection_67(Probe);5.40;cop[tikv];;eq(test.person_info.note, "Volker Boehm")
+    │       └─TableRowIDScan_66;5397.74;cop[tikv];table:pi;keep order:false
+    └─IndexLookUp_39(Probe);1.54;root;;
+      ├─IndexRangeScan_36(Build);1.92;cop[tikv];table:an, index:person_id_aka_name(person_id);range: decided by [eq(test.aka_name.person_id, test.person_info.person_id)], keep order:false
+      └─Selection_38(Probe);1.54;cop[tikv];;like(test.aka_name.name, "%a%", 92)
+        └─TableRowIDScan_37;1.92;cop[tikv];table:an;keep order:false

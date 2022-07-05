@@ -1,0 +1,21 @@
+HashAgg_23;1.00;root;;funcs:min(test.link_type.link)->Column#37, funcs:min(test.title.title)->Column#38, funcs:min(test.title.title)->Column#39
+└─Projection_25;159.81;root;;test.link_type.link, test.title.title, test.title.title
+  └─IndexJoin_31;159.81;root;;inner join, inner:TableReader_28, outer key:test.movie_link.linked_movie_id, inner key:test.title.id, equal cond:eq(test.movie_link.linked_movie_id, test.title.id)
+    ├─IndexJoin_53(Build);159.74;root;;inner join, inner:TableReader_50, outer key:test.movie_link.link_type_id, inner key:test.link_type.id, equal cond:eq(test.movie_link.link_type_id, test.link_type.id)
+    │ ├─IndexJoin_65(Build);159.74;root;;inner join, inner:IndexLookUp_64, outer key:test.title.id, inner key:test.movie_link.movie_id, equal cond:eq(test.title.id, test.movie_link.movie_id)
+    │ │ ├─IndexJoin_80(Build);34.14;root;;inner join, inner:TableReader_77, outer key:test.movie_keyword.movie_id, test.movie_keyword.movie_id, inner key:test.title.id, test.title.id, equal cond:eq(test.movie_keyword.movie_id, test.title.id), eq(test.movie_keyword.movie_id, test.title.id)
+    │ │ │ ├─HashJoin_111(Build);34.13;root;;inner join, equal:[eq(test.keyword.id, test.movie_keyword.keyword_id)]
+    │ │ │ │ ├─TableReader_121(Build);1.01;root;;data:Selection_120
+    │ │ │ │ │ └─Selection_120;1.01;cop[tikv];;eq(test.keyword.keyword, "10,000-mile-club")
+    │ │ │ │ │   └─TableFullScan_119;134170.00;cop[tikv];table:k;keep order:false
+    │ │ │ │ └─TableReader_123(Probe);4523930.00;root;;data:TableFullScan_122
+    │ │ │ │   └─TableFullScan_122;4523930.00;cop[tikv];table:mk;keep order:false
+    │ │ │ └─TableReader_77(Probe);1.00;root;;data:TableRangeScan_76
+    │ │ │   └─TableRangeScan_76;1.00;cop[tikv];table:t1;range: decided by [test.movie_keyword.movie_id test.movie_keyword.movie_id], keep order:false
+    │ │ └─IndexLookUp_64(Probe);4.68;root;;
+    │ │   ├─IndexRangeScan_62(Build);4.68;cop[tikv];table:ml, index:movie_id_movie_link(movie_id);range: decided by [eq(test.movie_link.movie_id, test.title.id)], keep order:false
+    │ │   └─TableRowIDScan_63(Probe);4.68;cop[tikv];table:ml;keep order:false
+    │ └─TableReader_50(Probe);1.00;root;;data:TableRangeScan_49
+    │   └─TableRangeScan_49;1.00;cop[tikv];table:lt;range: decided by [test.movie_link.link_type_id], keep order:false
+    └─TableReader_28(Probe);1.00;root;;data:TableRangeScan_27
+      └─TableRangeScan_27;1.00;cop[tikv];table:t2;range: decided by [test.movie_link.linked_movie_id], keep order:false

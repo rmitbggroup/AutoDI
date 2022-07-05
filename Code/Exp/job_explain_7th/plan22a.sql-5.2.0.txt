@@ -1,0 +1,46 @@
+HashAgg_51;1.00;root;;funcs:min(test.company_name.name)->Column#49, funcs:min(test.movie_info_idx.info)->Column#50, funcs:min(test.title.title)->Column#51
+└─Projection_53;4.04;root;;test.company_name.name, test.movie_info_idx.info, test.title.title
+  └─IndexJoin_61;4.04;root;;inner join, inner:TableReader_57, outer key:test.movie_keyword.keyword_id, inner key:test.keyword.id, equal cond:eq(test.movie_keyword.keyword_id, test.keyword.id)
+    ├─IndexJoin_71(Build);55.08;root;;inner join, inner:IndexLookUp_70, outer key:test.title.id, inner key:test.movie_keyword.movie_id, equal cond:eq(test.movie_companies.movie_id, test.movie_keyword.movie_id), eq(test.movie_info.movie_id, test.movie_keyword.movie_id), eq(test.movie_info_idx.movie_id, test.movie_keyword.movie_id), eq(test.title.id, test.movie_keyword.movie_id)
+    │ ├─IndexJoin_88(Build);5.78;root;;inner join, inner:TableReader_84, outer key:test.movie_companies.company_id, inner key:test.company_name.id, equal cond:eq(test.movie_companies.company_id, test.company_name.id)
+    │ │ ├─IndexJoin_109(Build);5.71;root;;inner join, inner:TableReader_106, outer key:test.movie_companies.company_type_id, inner key:test.company_type.id, equal cond:eq(test.movie_companies.company_type_id, test.company_type.id)
+    │ │ │ ├─IndexJoin_120(Build);5.71;root;;inner join, inner:IndexLookUp_119, outer key:test.title.id, inner key:test.movie_companies.movie_id, equal cond:eq(test.movie_info.movie_id, test.movie_companies.movie_id), eq(test.movie_info_idx.movie_id, test.movie_companies.movie_id), eq(test.title.id, test.movie_companies.movie_id)
+    │ │ │ │ ├─IndexJoin_138(Build);2.39;root;;inner join, inner:TableReader_134, outer key:test.title.kind_id, inner key:test.kind_type.id, equal cond:eq(test.title.kind_id, test.kind_type.id)
+    │ │ │ │ │ ├─IndexJoin_151(Build);2.39;root;;inner join, inner:TableReader_147, outer key:test.movie_info.movie_id, test.movie_info_idx.movie_id, inner key:test.title.id, test.title.id, equal cond:eq(test.movie_info.movie_id, test.title.id), eq(test.movie_info_idx.movie_id, test.title.id)
+    │ │ │ │ │ │ ├─IndexJoin_164(Build);2.39;root;;inner join, inner:TableReader_160, outer key:test.movie_info_idx.info_type_id, inner key:test.info_type.id, equal cond:eq(test.movie_info_idx.info_type_id, test.info_type.id)
+    │ │ │ │ │ │ │ ├─IndexJoin_177(Build);6348.06;root;;inner join, inner:IndexLookUp_176, outer key:test.movie_info.movie_id, inner key:test.movie_info_idx.movie_id, equal cond:eq(test.movie_info.movie_id, test.movie_info_idx.movie_id)
+    │ │ │ │ │ │ │ │ ├─IndexHashJoin_233(Build);208953.80;root;;inner join, inner:TableReader_227, outer key:test.movie_info.info_type_id, inner key:test.info_type.id, equal cond:eq(test.movie_info.info_type_id, test.info_type.id)
+    │ │ │ │ │ │ │ │ │ ├─TableReader_251(Build);656530.33;root;;data:Selection_250
+    │ │ │ │ │ │ │ │ │ │ └─Selection_250;656530.33;cop[tikv];;in(test.movie_info.info, "Germany", "German", "USA", "American")
+    │ │ │ │ │ │ │ │ │ │   └─TableFullScan_249;14835720.00;cop[tikv];table:mi;keep order:false
+    │ │ │ │ │ │ │ │ │ └─TableReader_227(Probe);0.01;root;;data:Selection_226
+    │ │ │ │ │ │ │ │ │   └─Selection_226;0.01;cop[tikv];;eq(test.info_type.info, "countries")
+    │ │ │ │ │ │ │ │ │     └─TableRangeScan_225;1.00;cop[tikv];table:it1;range: decided by [test.movie_info.info_type_id], keep order:false
+    │ │ │ │ │ │ │ │ └─IndexLookUp_176(Probe);0.03;root;;
+    │ │ │ │ │ │ │ │   ├─IndexRangeScan_173(Build);0.09;cop[tikv];table:mi_idx, index:movie_id_movie_info_idx(movie_id);range: decided by [eq(test.movie_info_idx.movie_id, test.movie_info.movie_id)], keep order:false, stats:pseudo
+    │ │ │ │ │ │ │ │   └─Selection_175(Probe);0.03;cop[tikv];;lt(test.movie_info_idx.info, "7.0")
+    │ │ │ │ │ │ │ │     └─TableRowIDScan_174;0.09;cop[tikv];table:mi_idx;keep order:false, stats:pseudo
+    │ │ │ │ │ │ │ └─TableReader_160(Probe);0.00;root;;data:Selection_159
+    │ │ │ │ │ │ │   └─Selection_159;0.00;cop[tikv];;eq(test.info_type.info, "rating")
+    │ │ │ │ │ │ │     └─TableRangeScan_158;0.04;cop[tikv];table:it2;range: decided by [test.movie_info_idx.info_type_id], keep order:false
+    │ │ │ │ │ │ └─TableReader_147(Probe);0.26;root;;data:Selection_146
+    │ │ │ │ │ │   └─Selection_146;0.26;cop[tikv];;gt(test.title.production_year, 2008)
+    │ │ │ │ │ │     └─TableRangeScan_145;1.00;cop[tikv];table:t;range: decided by [test.movie_info.movie_id test.movie_info_idx.movie_id], keep order:false
+    │ │ │ │ │ └─TableReader_134(Probe);0.29;root;;data:Selection_133
+    │ │ │ │ │   └─Selection_133;0.29;cop[tikv];;in(test.kind_type.kind, "movie", "episode")
+    │ │ │ │ │     └─TableRangeScan_132;1.00;cop[tikv];table:kt;range: decided by [test.title.kind_id], keep order:false
+    │ │ │ │ └─IndexLookUp_119(Probe);2.39;root;;
+    │ │ │ │   ├─IndexRangeScan_116(Build);2.99;cop[tikv];table:mc, index:movie_id_movie_companies(movie_id);range: decided by [eq(test.movie_companies.movie_id, test.title.id)], keep order:false
+    │ │ │ │   └─Selection_118(Probe);2.39;cop[tikv];;like(test.movie_companies.note, "%(200%)%", 92), not(like(test.movie_companies.note, "%(USA)%", 92))
+    │ │ │ │     └─TableRowIDScan_117;2.99;cop[tikv];table:mc;keep order:false
+    │ │ │ └─TableReader_106(Probe);1.00;root;;data:TableRangeScan_105
+    │ │ │   └─TableRangeScan_105;1.00;cop[tikv];table:ct;range: decided by [test.movie_companies.company_type_id], keep order:false
+    │ │ └─TableReader_84(Probe);0.69;root;;data:Selection_83
+    │ │   └─Selection_83;0.69;cop[tikv];;ne(test.company_name.country_code, "[us]")
+    │ │     └─TableRangeScan_82;1.00;cop[tikv];table:cn;range: decided by [test.movie_companies.company_id], keep order:false
+    │ └─IndexLookUp_70(Probe);9.53;root;;
+    │   ├─IndexRangeScan_68(Build);9.53;cop[tikv];table:mk, index:movie_id_movie_keyword(movie_id);range: decided by [eq(test.movie_keyword.movie_id, test.title.id)], keep order:false
+    │   └─TableRowIDScan_69(Probe);9.53;cop[tikv];table:mk;keep order:false
+    └─TableReader_57(Probe);0.00;root;;data:Selection_56
+      └─Selection_56;0.00;cop[tikv];;in(test.keyword.keyword, "murder", "murder-in-title", "blood", "violence")
+        └─TableRangeScan_55;1.00;cop[tikv];table:k;range: decided by [test.movie_keyword.keyword_id], keep order:false

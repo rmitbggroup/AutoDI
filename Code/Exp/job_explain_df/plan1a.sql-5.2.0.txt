@@ -1,0 +1,19 @@
+StreamAgg_22;1.00;root;;funcs:min(test.movie_companies.note)->Column#27, funcs:min(test.title.title)->Column#28, funcs:min(test.title.production_year)->Column#29
+└─IndexJoin_28;0.11;root;;inner join, inner:TableReader_25, outer key:test.movie_companies.movie_id, test.movie_info_idx.movie_id, inner key:test.title.id, test.title.id, equal cond:eq(test.movie_companies.movie_id, test.title.id), eq(test.movie_info_idx.movie_id, test.title.id)
+  ├─HashJoin_46(Build);0.11;root;;inner join, equal:[eq(test.movie_info_idx.info_type_id, test.info_type.id)]
+  │ ├─TableReader_130(Build);0.11;root;;data:Selection_129
+  │ │ └─Selection_129;0.11;cop[tikv];;eq(test.info_type.info, "top 250 rank")
+  │ │   └─TableFullScan_128;113.00;cop[tikv];table:it;keep order:false
+  │ └─HashJoin_63(Probe);6522.82;root;;inner join, equal:[eq(test.movie_companies.movie_id, test.movie_info_idx.movie_id)]
+  │   ├─IndexHashJoin_91(Build);5218.26;root;;inner join, inner:IndexLookUp_88, outer key:test.company_type.id, inner key:test.movie_companies.company_type_id, equal cond:eq(test.company_type.id, test.movie_companies.company_type_id)
+  │   │ ├─TableReader_122(Build);0.00;root;;data:Selection_121
+  │   │ │ └─Selection_121;0.00;cop[tikv];;eq(test.company_type.kind, "production companies")
+  │   │ │   └─TableFullScan_120;4.00;cop[tikv];table:ct;keep order:false
+  │   │ └─IndexLookUp_88(Probe);1304564.50;root;;
+  │   │   ├─IndexRangeScan_85(Build);1698651.69;cop[tikv];table:mc, index:company_type_id_movie_companies(company_type_id);range: decided by [eq(test.movie_companies.company_type_id, test.company_type.id)], keep order:false
+  │   │   └─Selection_87(Probe);1304564.50;cop[tikv];;not(like(test.movie_companies.note, "%(as Metro-Goldwyn-Mayer Pictures)%", 92)), or(like(test.movie_companies.note, "%(co-production)%", 92), like(test.movie_companies.note, "%(presents)%", 92))
+  │   │     └─TableRowIDScan_86;1698651.69;cop[tikv];table:mc;keep order:false
+  │   └─TableReader_127(Probe);10000.00;root;;data:TableFullScan_126
+  │     └─TableFullScan_126;10000.00;cop[tikv];table:mi_idx;keep order:false, stats:pseudo
+  └─TableReader_25(Probe);1.00;root;;data:TableRangeScan_24
+    └─TableRangeScan_24;1.00;cop[tikv];table:t;range: decided by [test.movie_companies.movie_id test.movie_info_idx.movie_id], keep order:false

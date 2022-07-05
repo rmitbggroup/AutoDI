@@ -1,0 +1,32 @@
+Sort_30;728.61;root;;Column#62
+└─Projection_32;728.61;root;;Column#62, div(Column#64, Column#65)->Column#66
+  └─HashAgg_33;728.61;root;;group by:Column#113, funcs:sum(Column#110)->Column#64, funcs:sum(Column#111)->Column#65, funcs:firstrow(Column#112)->Column#62
+    └─Projection_109;12146.99;root;;case(eq(test.nation.n_name, INDIA), mul(test.lineitem.l_extendedprice, minus(1, test.lineitem.l_discount)), 0)->Column#110, mul(test.lineitem.l_extendedprice, minus(1, test.lineitem.l_discount))->Column#111, extract(YEAR, test.orders.o_orderdate)->Column#112, extract(YEAR, test.orders.o_orderdate)->Column#113
+      └─Projection_34;12146.99;root;;test.lineitem.l_extendedprice, test.lineitem.l_discount, test.orders.o_orderdate, test.nation.n_name
+        └─IndexJoin_39;12146.99;root;;inner join, inner:TableReader_36, outer key:test.supplier.s_nationkey, inner key:test.nation.n_nationkey, equal cond:eq(test.supplier.s_nationkey, test.nation.n_nationkey)
+          ├─IndexJoin_50(Build);12146.99;root;;inner join, inner:TableReader_47, outer key:test.lineitem.l_suppkey, inner key:test.supplier.s_suppkey, equal cond:eq(test.lineitem.l_suppkey, test.supplier.s_suppkey)
+          │ ├─IndexJoin_63(Build);12146.99;root;;inner join, inner:TableReader_59, outer key:test.lineitem.l_partkey, inner key:test.part.p_partkey, equal cond:eq(test.lineitem.l_partkey, test.part.p_partkey)
+          │ │ ├─IndexJoin_74(Build);1829106.93;root;;inner join, inner:IndexLookUp_73, outer key:test.orders.o_orderkey, inner key:test.lineitem.l_orderkey, equal cond:eq(test.orders.o_orderkey, test.lineitem.l_orderkey)
+          │ │ │ ├─HashJoin_85(Build);453409.64;root;;inner join, equal:[eq(test.customer.c_custkey, test.orders.o_custkey)]
+          │ │ │ │ ├─TableReader_108(Build);454248.01;root;;data:Selection_107
+          │ │ │ │ │ └─Selection_107;454248.01;cop[tikv];;ge(test.orders.o_orderdate, 1995-01-01 00:00:00.000000), le(test.orders.o_orderdate, 1996-12-31 00:00:00.000000)
+          │ │ │ │ │   └─TableFullScan_106;1500000.00;cop[tikv];table:orders;keep order:false
+          │ │ │ │ └─HashJoin_87(Probe);30000.00;root;;inner join, equal:[eq(test.nation.n_nationkey, test.customer.c_nationkey)]
+          │ │ │ │   ├─TableReader_105(Build);150000.00;root;;data:TableFullScan_104
+          │ │ │ │   │ └─TableFullScan_104;150000.00;cop[tikv];table:customer;keep order:false
+          │ │ │ │   └─IndexHashJoin_97(Probe);5.00;root;;inner join, inner:TableReader_91, outer key:test.nation.n_regionkey, inner key:test.region.r_regionkey, equal cond:eq(test.nation.n_regionkey, test.region.r_regionkey)
+          │ │ │ │     ├─TableReader_103(Build);25.00;root;;data:TableFullScan_102
+          │ │ │ │     │ └─TableFullScan_102;25.00;cop[tikv];table:n1;keep order:false
+          │ │ │ │     └─TableReader_91(Probe);0.20;root;;data:Selection_90
+          │ │ │ │       └─Selection_90;0.20;cop[tikv];;eq(test.region.r_name, "ASIA")
+          │ │ │ │         └─TableRangeScan_89;1.00;cop[tikv];table:region;range: decided by [test.nation.n_regionkey], keep order:false
+          │ │ │ └─IndexLookUp_73(Probe);4.03;root;;
+          │ │ │   ├─IndexRangeScan_71(Build);4.03;cop[tikv];table:lineitem, index:PRIMARY(L_ORDERKEY, L_LINENUMBER);range: decided by [eq(test.lineitem.l_orderkey, test.orders.o_orderkey)], keep order:false
+          │ │ │   └─TableRowIDScan_72(Probe);4.03;cop[tikv];table:lineitem;keep order:false
+          │ │ └─TableReader_59(Probe);0.01;root;;data:Selection_58
+          │ │   └─Selection_58;0.01;cop[tikv];;eq(test.part.p_type, "SMALL PLATED COPPER")
+          │ │     └─TableRangeScan_57;1.00;cop[tikv];table:part;range: decided by [test.lineitem.l_partkey], keep order:false
+          │ └─TableReader_47(Probe);1.00;root;;data:TableRangeScan_46
+          │   └─TableRangeScan_46;1.00;cop[tikv];table:supplier;range: decided by [test.lineitem.l_suppkey], keep order:false
+          └─TableReader_36(Probe);1.00;root;;data:TableRangeScan_35
+            └─TableRangeScan_35;1.00;cop[tikv];table:n2;range: decided by [test.supplier.s_nationkey], keep order:false

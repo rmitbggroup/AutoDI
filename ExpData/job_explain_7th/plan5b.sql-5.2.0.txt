@@ -1,0 +1,21 @@
+HashAgg_23;1.00;root;;funcs:min(test.title.title)->Column#27
+└─TopN_27;1.00;root;;test.title.title, offset:0, count:1
+  └─IndexJoin_38;538130.33;root;;inner join, inner:TableReader_35, outer key:test.movie_info.info_type_id, inner key:test.info_type.id, equal cond:eq(test.movie_info.info_type_id, test.info_type.id)
+    ├─IndexJoin_49(Build);538130.33;root;;inner join, inner:IndexLookUp_48, outer key:test.title.id, inner key:test.movie_info.movie_id, equal cond:eq(test.movie_companies.movie_id, test.movie_info.movie_id), eq(test.title.id, test.movie_info.movie_id)
+    │ ├─IndexJoin_67(Build);586855.83;root;;inner join, inner:TableReader_63, outer key:test.movie_companies.movie_id, inner key:test.title.id, equal cond:eq(test.movie_companies.movie_id, test.title.id)
+    │ │ ├─IndexHashJoin_116(Build);1304564.50;root;;inner join, inner:TableReader_110, outer key:test.movie_companies.company_type_id, inner key:test.company_type.id, equal cond:eq(test.movie_companies.company_type_id, test.company_type.id)
+    │ │ │ ├─TableReader_134(Build);2087303.20;root;;data:Selection_133
+    │ │ │ │ └─Selection_133;2087303.20;cop[tikv];;like(test.movie_companies.note, "%(1994)%", 92), like(test.movie_companies.note, "%(USA)%", 92), like(test.movie_companies.note, "%(VHS)%", 92)
+    │ │ │ │   └─TableFullScan_132;2609129.00;cop[tikv];table:mc;keep order:false
+    │ │ │ └─TableReader_110(Probe);0.25;root;;data:Selection_109
+    │ │ │   └─Selection_109;0.25;cop[tikv];;eq(test.company_type.kind, "production companies")
+    │ │ │     └─TableRangeScan_108;1.00;cop[tikv];table:ct;range: decided by [test.movie_companies.company_type_id], keep order:false
+    │ │ └─TableReader_63(Probe);0.16;root;;data:Selection_62
+    │ │   └─Selection_62;0.16;cop[tikv];;gt(test.title.production_year, 2010)
+    │ │     └─TableRangeScan_61;1.00;cop[tikv];table:t;range: decided by [test.movie_companies.movie_id], keep order:false
+    │ └─IndexLookUp_48(Probe);0.92;root;;
+    │   ├─IndexRangeScan_45(Build);25.28;cop[tikv];table:mi, index:movie_id_movie_info(movie_id);range: decided by [eq(test.movie_info.movie_id, test.title.id)], keep order:false
+    │   └─Selection_47(Probe);0.92;cop[tikv];;in(test.movie_info.info, "USA", "America")
+    │     └─TableRowIDScan_46;25.28;cop[tikv];table:mi;keep order:false
+    └─TableReader_35(Probe);1.00;root;;data:TableRangeScan_34
+      └─TableRangeScan_34;1.00;cop[tikv];table:it;range: decided by [test.movie_info.info_type_id], keep order:false

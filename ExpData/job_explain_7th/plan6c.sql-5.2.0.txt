@@ -1,0 +1,20 @@
+HashAgg_20;1.00;root;;funcs:min(test.keyword.keyword)->Column#35, funcs:min(test.name.name)->Column#36, funcs:min(test.title.title)->Column#37
+└─Projection_22;531.87;root;;test.keyword.keyword, test.name.name, test.title.title
+  └─IndexJoin_30;531.87;root;;inner join, inner:TableReader_26, outer key:test.cast_info.person_id, inner key:test.name.id, equal cond:eq(test.cast_info.person_id, test.name.id)
+    ├─IndexJoin_40(Build);527.85;root;;inner join, inner:IndexLookUp_39, outer key:test.title.id, inner key:test.cast_info.movie_id, equal cond:eq(test.movie_keyword.movie_id, test.cast_info.movie_id), eq(test.title.id, test.cast_info.movie_id)
+    │ ├─IndexJoin_57(Build);34.14;root;;inner join, inner:TableReader_53, outer key:test.movie_keyword.movie_id, inner key:test.title.id, equal cond:eq(test.movie_keyword.movie_id, test.title.id)
+    │ │ ├─IndexHashJoin_103(Build);34.13;root;;inner join, inner:TableReader_97, outer key:test.movie_keyword.keyword_id, inner key:test.keyword.id, equal cond:eq(test.movie_keyword.keyword_id, test.keyword.id)
+    │ │ │ ├─TableReader_119(Build);4523930.00;root;;data:TableFullScan_118
+    │ │ │ │ └─TableFullScan_118;4523930.00;cop[tikv];table:mk;keep order:false
+    │ │ │ └─TableReader_97(Probe);0.00;root;;data:Selection_96
+    │ │ │   └─Selection_96;0.00;cop[tikv];;eq(test.keyword.keyword, "marvel-cinematic-universe")
+    │ │ │     └─TableRangeScan_95;1.00;cop[tikv];table:k;range: decided by [test.movie_keyword.keyword_id], keep order:false
+    │ │ └─TableReader_53(Probe);0.00;root;;data:Selection_52
+    │ │   └─Selection_52;0.00;cop[tikv];;gt(test.title.production_year, 2014)
+    │ │     └─TableRangeScan_51;1.00;cop[tikv];table:t;range: decided by [test.movie_keyword.movie_id], keep order:false
+    │ └─IndexLookUp_39(Probe);15.46;root;;
+    │   ├─IndexRangeScan_37(Build);15.46;cop[tikv];table:ci, index:movie_id_cast_info(movie_id);range: decided by [eq(test.cast_info.movie_id, test.title.id)], keep order:false
+    │   └─TableRowIDScan_38(Probe);15.46;cop[tikv];table:ci;keep order:false
+    └─TableReader_26(Probe);0.80;root;;data:Selection_25
+      └─Selection_25;0.80;cop[tikv];;like(test.name.name, "%Downey%Robert%", 92)
+        └─TableRangeScan_24;1.00;cop[tikv];table:n;range: decided by [test.cast_info.person_id], keep order:false

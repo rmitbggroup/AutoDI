@@ -1,0 +1,7 @@
+Sort_6;2.94;root;;test.lineitem.l_returnflag, test.lineitem.l_linestatus
+└─Projection_8;2.94;root;;test.lineitem.l_returnflag, test.lineitem.l_linestatus, Column#18, Column#19, Column#20, Column#21, Column#22, Column#23, Column#24, Column#25
+  └─HashAgg_11;2.94;root;;group by:Column#74, Column#75, funcs:sum(Column#65)->Column#18, funcs:sum(Column#66)->Column#19, funcs:sum(Column#67)->Column#20, funcs:sum(Column#68)->Column#21, funcs:avg(Column#69)->Column#22, funcs:avg(Column#70)->Column#23, funcs:avg(Column#71)->Column#24, funcs:count(1)->Column#25, funcs:firstrow(Column#72)->test.lineitem.l_returnflag, funcs:firstrow(Column#73)->test.lineitem.l_linestatus
+    └─Projection_19;5880598.41;root;;test.lineitem.l_quantity, test.lineitem.l_extendedprice, mul(test.lineitem.l_extendedprice, minus(1, test.lineitem.l_discount))->Column#67, mul(mul(test.lineitem.l_extendedprice, minus(1, test.lineitem.l_discount)), plus(1, test.lineitem.l_tax))->Column#68, test.lineitem.l_quantity, test.lineitem.l_extendedprice, test.lineitem.l_discount, test.lineitem.l_returnflag, test.lineitem.l_linestatus, test.lineitem.l_returnflag, test.lineitem.l_linestatus
+      └─TableReader_18;5880598.41;root;;data:Selection_17
+        └─Selection_17;5880598.41;cop[tikv];;le(test.lineitem.l_shipdate, 1998-08-15)
+          └─TableFullScan_16;6001215.00;cop[tikv];table:lineitem;keep order:false

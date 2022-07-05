@@ -1,0 +1,13 @@
+Projection_17;1.00;root;;div(Column#46, 7.0)->Column#47
+└─StreamAgg_19;1.00;root;;funcs:sum(test.lineitem.l_extendedprice)->Column#46
+  └─HashJoin_51;6.09;root;;inner join, equal:[eq(test.part.p_partkey, test.lineitem.l_partkey)], other cond:lt(test.lineitem.l_quantity, mul(0.2, Column#44))
+    ├─HashJoin_35(Build);6.09;root;;inner join, equal:[eq(test.part.p_partkey, test.lineitem.l_partkey)]
+    │ ├─TableReader_40(Build);0.20;root;;data:Selection_39
+    │ │ └─Selection_39;0.20;cop[tikv];;eq(test.part.p_brand, "Brand#44"), eq(test.part.p_container, "WRAP PKG")
+    │ │   └─TableFullScan_38;200000.00;cop[tikv];table:part;keep order:false
+    │ └─TableReader_37(Probe);6001215.00;root;;data:TableFullScan_36
+    │   └─TableFullScan_36;6001215.00;cop[tikv];table:lineitem;keep order:false
+    └─HashAgg_45(Probe);196960.00;root;;group by:test.lineitem.l_partkey, funcs:avg(Column#50, Column#51)->Column#44, funcs:firstrow(test.lineitem.l_partkey)->test.lineitem.l_partkey
+      └─TableReader_46;196960.00;root;;data:HashAgg_41
+        └─HashAgg_41;196960.00;cop[tikv];;group by:test.lineitem.l_partkey, funcs:count(test.lineitem.l_quantity)->Column#50, funcs:sum(test.lineitem.l_quantity)->Column#51
+          └─TableFullScan_44;6001215.00;cop[tikv];table:lineitem;keep order:false

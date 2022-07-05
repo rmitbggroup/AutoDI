@@ -1,0 +1,21 @@
+StreamAgg_21;1.00;root;;funcs:min(test.movie_info_idx.info)->Column#26, funcs:min(test.title.title)->Column#27
+└─IndexJoin_141;1.35;root;;inner join, inner:TableReader_137, outer key:test.movie_keyword.keyword_id, inner key:test.keyword.id, equal cond:eq(test.movie_keyword.keyword_id, test.keyword.id)
+  ├─IndexHashJoin_42(Build);1.35;root;;inner join, inner:IndexLookUp_39, outer key:test.title.id, inner key:test.movie_keyword.movie_id, equal cond:eq(test.movie_info_idx.movie_id, test.movie_keyword.movie_id), eq(test.title.id, test.movie_keyword.movie_id)
+  │ ├─IndexJoin_57(Build);0.14;root;;inner join, inner:TableReader_53, outer key:test.movie_info_idx.movie_id, inner key:test.title.id, equal cond:eq(test.movie_info_idx.movie_id, test.title.id)
+  │ │ ├─IndexJoin_88(Build);0.14;root;;inner join, inner:IndexLookUp_87, outer key:test.info_type.id, inner key:test.movie_info_idx.info_type_id, equal cond:eq(test.info_type.id, test.movie_info_idx.info_type_id)
+  │ │ │ ├─TableReader_121(Build);0.11;root;;data:Selection_120
+  │ │ │ │ └─Selection_120;0.11;cop[tikv];;eq(test.info_type.info, "rating")
+  │ │ │ │   └─TableFullScan_119;113.00;cop[tikv];table:it;keep order:false
+  │ │ │ └─IndexLookUp_87(Probe);1.25;root;;
+  │ │ │   ├─IndexRangeScan_84(Build);3.75;cop[tikv];table:mi_idx, index:info_type_id_movie_info_idx(info_type_id);range: decided by [eq(test.movie_info_idx.info_type_id, test.info_type.id)], keep order:false, stats:pseudo
+  │ │ │   └─Selection_86(Probe);1.25;cop[tikv];;gt(test.movie_info_idx.info, "5.0")
+  │ │ │     └─TableRowIDScan_85;3.75;cop[tikv];table:mi_idx;keep order:false, stats:pseudo
+  │ │ └─TableReader_53(Probe);0.40;root;;data:Selection_52
+  │ │   └─Selection_52;0.40;cop[tikv];;gt(test.title.production_year, 2005)
+  │ │     └─TableRangeScan_51;1.00;cop[tikv];table:t;range: decided by [test.movie_info_idx.movie_id], keep order:false
+  │ └─IndexLookUp_39(Probe);9.53;root;;
+  │   ├─IndexRangeScan_37(Build);9.53;cop[tikv];table:mk, index:movie_id_movie_keyword(movie_id);range: decided by [eq(test.movie_keyword.movie_id, test.title.id)], keep order:false
+  │   └─TableRowIDScan_38(Probe);9.53;cop[tikv];table:mk;keep order:false
+  └─TableReader_137(Probe);0.80;root;;data:Selection_136
+    └─Selection_136;0.80;cop[tikv];;like(test.keyword.keyword, "%sequel%", 92)
+      └─TableRangeScan_135;1.00;cop[tikv];table:k;range: decided by [test.movie_keyword.keyword_id], keep order:false

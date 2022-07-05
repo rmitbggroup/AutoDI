@@ -1,0 +1,10 @@
+Sort_9;149568.00;root;;Column#19:desc, Column#18:desc
+└─Projection_11;149568.00;root;;Column#18, Column#19
+  └─HashAgg_12;149568.00;root;;group by:Column#18, funcs:count(1)->Column#19, funcs:firstrow(Column#18)->Column#18
+    └─HashAgg_13;149568.00;root;;group by:test.customer.c_custkey, funcs:count(test.orders.o_orderkey)->Column#18
+      └─HashJoin_16;1203465.98;root;;left outer join, equal:[eq(test.customer.c_custkey, test.orders.o_custkey)]
+        ├─TableReader_18(Build);150000.00;root;;data:TableFullScan_17
+        │ └─TableFullScan_17;150000.00;cop[tikv];table:customer;keep order:false
+        └─TableReader_21(Probe);1200000.00;root;;data:Selection_20
+          └─Selection_20;1200000.00;cop[tikv];;not(like(test.orders.o_comment, "%pending%deposits%", 92))
+            └─TableFullScan_19;1500000.00;cop[tikv];table:orders;keep order:false

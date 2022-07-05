@@ -1,0 +1,34 @@
+HashAgg_33;1.00;root;;funcs:min(test.name.name)->Column#50, funcs:min(test.person_info.info)->Column#51
+└─Projection_35;7502.45;root;;test.name.name, test.person_info.info
+  └─IndexJoin_42;7502.45;root;;inner join, inner:TableReader_38, outer key:test.cast_info.movie_id, test.movie_link.linked_movie_id, inner key:test.title.id, test.title.id, equal cond:eq(test.cast_info.movie_id, test.title.id), eq(test.movie_link.linked_movie_id, test.title.id)
+    ├─IndexJoin_55(Build);7499.25;root;;inner join, inner:TableReader_51, outer key:test.movie_link.link_type_id, inner key:test.link_type.id, equal cond:eq(test.movie_link.link_type_id, test.link_type.id)
+    │ ├─IndexJoin_67(Build);29997.00;root;;inner join, inner:IndexLookUp_66, outer key:test.cast_info.movie_id, inner key:test.movie_link.linked_movie_id, equal cond:eq(test.cast_info.movie_id, test.movie_link.linked_movie_id)
+    │ │ ├─IndexJoin_81(Build);1879820.38;root;;inner join, inner:IndexLookUp_80, outer key:test.person_info.person_id, inner key:test.cast_info.person_id, equal cond:eq(test.aka_name.person_id, test.cast_info.person_id), eq(test.name.id, test.cast_info.person_id), eq(test.person_info.person_id, test.cast_info.person_id)
+    │ │ │ ├─IndexJoin_95(Build);208722.19;root;;inner join, inner:IndexLookUp_94, outer key:test.person_info.person_id, inner key:test.aka_name.person_id, equal cond:eq(test.name.id, test.aka_name.person_id), eq(test.person_info.person_id, test.aka_name.person_id)
+    │ │ │ │ ├─IndexJoin_113(Build);135739.75;root;;inner join, inner:TableReader_109, outer key:test.person_info.person_id, inner key:test.name.id, equal cond:eq(test.person_info.person_id, test.name.id)
+    │ │ │ │ │ ├─IndexHashJoin_162(Build);134712.00;root;;inner join, inner:TableReader_156, outer key:test.person_info.info_type_id, inner key:test.info_type.id, equal cond:eq(test.person_info.info_type_id, test.info_type.id)
+    │ │ │ │ │ │ ├─TableReader_180(Build);2963664.00;root;;data:Selection_179
+    │ │ │ │ │ │ │ └─Selection_179;2963664.00;cop[tikv];;not(isnull(test.person_info.note))
+    │ │ │ │ │ │ │   └─TableFullScan_178;2963664.00;cop[tikv];table:pi;keep order:false
+    │ │ │ │ │ │ └─TableReader_156(Probe);0.01;root;;data:Selection_155
+    │ │ │ │ │ │   └─Selection_155;0.01;cop[tikv];;eq(test.info_type.info, "mini biography")
+    │ │ │ │ │ │     └─TableRangeScan_154;1.00;cop[tikv];table:it;range: decided by [test.person_info.info_type_id], keep order:false
+    │ │ │ │ │ └─TableReader_109(Probe);0.11;root;;data:Selection_108
+    │ │ │ │ │   └─Selection_108;0.11;cop[tikv];;ge(test.name.name_pcode_cf, "A"), le(test.name.name_pcode_cf, "F"), or(eq(test.name.gender, "m"), and(eq(test.name.gender, "f"), like(test.name.name, "A%", 92)))
+    │ │ │ │ │     └─TableRangeScan_107;1.00;cop[tikv];table:n;range: decided by [test.person_info.person_id], keep order:false
+    │ │ │ │ └─IndexLookUp_94(Probe);1.54;root;;
+    │ │ │ │   ├─IndexRangeScan_91(Build);1.90;cop[tikv];table:an, index:person_id_aka_name(person_id);range: decided by [eq(test.aka_name.person_id, test.person_info.person_id)], keep order:false
+    │ │ │ │   └─Selection_93(Probe);1.54;cop[tikv];;or(like(test.aka_name.name, "%a%", 92), like(test.aka_name.name, "A%", 92))
+    │ │ │ │     └─TableRowIDScan_92;1.90;cop[tikv];table:an;keep order:false
+    │ │ │ └─IndexLookUp_80(Probe);9.01;root;;
+    │ │ │   ├─IndexRangeScan_78(Build);9.01;cop[tikv];table:ci, index:person_id_cast_info(person_id);range: decided by [eq(test.cast_info.person_id, test.person_info.person_id)], keep order:false
+    │ │ │   └─TableRowIDScan_79(Probe);9.01;cop[tikv];table:ci;keep order:false
+    │ │ └─IndexLookUp_66(Probe);0.02;root;;
+    │ │   ├─IndexRangeScan_64(Build);0.02;cop[tikv];table:ml, index:linked_movie_id_movie_link(linked_movie_id);range: decided by [eq(test.movie_link.linked_movie_id, test.cast_info.movie_id)], keep order:false
+    │ │   └─TableRowIDScan_65(Probe);0.02;cop[tikv];table:ml;keep order:false
+    │ └─TableReader_51(Probe);0.22;root;;data:Selection_50
+    │   └─Selection_50;0.22;cop[tikv];;in(test.link_type.link, "references", "referenced in", "features", "featured in")
+    │     └─TableRangeScan_49;1.00;cop[tikv];table:lt;range: decided by [test.movie_link.link_type_id], keep order:false
+    └─TableReader_38(Probe);0.61;root;;data:Selection_37
+      └─Selection_37;0.61;cop[tikv];;ge(test.title.production_year, 1980), le(test.title.production_year, 2010)
+        └─TableRangeScan_36;1.00;cop[tikv];table:t;range: decided by [test.cast_info.movie_id test.movie_link.linked_movie_id], keep order:false

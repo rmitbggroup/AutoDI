@@ -1,0 +1,25 @@
+Sort_24;1.00;root;;Column#49:desc
+└─Projection_26;1.00;root;;test.nation.n_name, Column#49
+  └─HashAgg_27;1.00;root;;group by:Column#57, funcs:sum(Column#55)->Column#49, funcs:firstrow(Column#56)->test.nation.n_name
+    └─Projection_76;151279.34;root;;mul(test.lineitem.l_extendedprice, minus(1, test.lineitem.l_discount))->Column#55, test.nation.n_name, test.nation.n_name
+      └─Projection_28;151279.34;root;;test.lineitem.l_extendedprice, test.lineitem.l_discount, test.nation.n_name
+        └─IndexHashJoin_34;151279.34;root;;inner join, inner:IndexLookUp_31, outer key:test.orders.o_orderkey, inner key:test.lineitem.l_orderkey, equal cond:eq(test.orders.o_orderkey, test.lineitem.l_orderkey), eq(test.supplier.s_suppkey, test.lineitem.l_suppkey)
+          ├─HashJoin_42(Build);37500.00;root;;inner join, equal:[eq(test.customer.c_custkey, test.orders.o_custkey)]
+          │ ├─TableReader_72(Build);37500.00;root;;data:Selection_71
+          │ │ └─Selection_71;37500.00;cop[tikv];;ge(test.orders.o_orderdate, 1994-01-01 00:00:00.000000), lt(test.orders.o_orderdate, 1995-01-01)
+          │ │   └─TableFullScan_70;1500000.00;cop[tikv];table:orders;keep order:false
+          │ └─HashJoin_45(Probe);60000.00;root;;inner join, equal:[eq(test.supplier.s_nationkey, test.customer.c_nationkey)]
+          │   ├─HashJoin_47(Build);10.00;root;;inner join, equal:[eq(test.nation.n_nationkey, test.supplier.s_nationkey)]
+          │   │ ├─HashJoin_60(Build);0.03;root;;inner join, equal:[eq(test.region.r_regionkey, test.nation.n_regionkey)]
+          │   │ │ ├─TableReader_65(Build);0.01;root;;data:Selection_64
+          │   │ │ │ └─Selection_64;0.01;cop[tikv];;eq(test.region.r_name, "MIDDLE EAST")
+          │   │ │ │   └─TableFullScan_63;5.00;cop[tikv];table:region;keep order:false
+          │   │ │ └─TableReader_62(Probe);25.00;root;;data:TableFullScan_61
+          │   │ │   └─TableFullScan_61;25.00;cop[tikv];table:nation;keep order:false
+          │   │ └─TableReader_67(Probe);10000.00;root;;data:TableFullScan_66
+          │   │   └─TableFullScan_66;10000.00;cop[tikv];table:supplier;keep order:false
+          │   └─TableReader_69(Probe);150000.00;root;;data:TableFullScan_68
+          │     └─TableFullScan_68;150000.00;cop[tikv];table:customer;keep order:false
+          └─IndexLookUp_31(Probe);4.03;root;;
+            ├─IndexRangeScan_29(Build);4.03;cop[tikv];table:lineitem, index:PRIMARY(L_ORDERKEY, L_LINENUMBER);range: decided by [eq(test.lineitem.l_orderkey, test.orders.o_orderkey)], keep order:false
+            └─TableRowIDScan_30(Probe);4.03;cop[tikv];table:lineitem;keep order:false

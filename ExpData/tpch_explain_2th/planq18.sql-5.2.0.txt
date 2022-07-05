@@ -1,0 +1,20 @@
+Projection_25;100.00;root;;test.customer.c_name, test.customer.c_custkey, test.orders.o_orderkey, test.orders.o_orderdate, test.orders.o_totalprice, Column#54
+└─TopN_28;100.00;root;;test.orders.o_totalprice:desc, test.orders.o_orderdate, offset:0, count:100
+  └─HashAgg_33;1203465.98;root;;group by:test.customer.c_custkey, test.customer.c_name, test.orders.o_orderdate, test.orders.o_orderkey, test.orders.o_totalprice, funcs:sum(test.lineitem.l_quantity)->Column#54, funcs:firstrow(test.customer.c_custkey)->test.customer.c_custkey, funcs:firstrow(test.customer.c_name)->test.customer.c_name, funcs:firstrow(test.orders.o_orderkey)->test.orders.o_orderkey, funcs:firstrow(test.orders.o_totalprice)->test.orders.o_totalprice, funcs:firstrow(test.orders.o_orderdate)->test.orders.o_orderdate
+    └─MergeJoin_35;4854920.96;root;;inner join, left key:test.orders.o_orderkey, right key:test.lineitem.l_orderkey
+      ├─Projection_71(Build);6001215.00;root;;test.lineitem.l_orderkey, test.lineitem.l_quantity
+      │ └─IndexLookUp_70;6001215.00;root;;
+      │   ├─IndexFullScan_68(Build);6001215.00;cop[tikv];table:lineitem, index:PRIMARY(L_ORDERKEY, L_LINENUMBER);keep order:true
+      │   └─TableRowIDScan_69(Probe);6001215.00;cop[tikv];table:lineitem;keep order:false
+      └─MergeJoin_50(Probe);1203465.98;root;;inner join, left key:test.orders.o_orderkey, right key:test.lineitem.l_orderkey
+        ├─Selection_61(Build);1190092.80;root;;gt(Column#52, 314)
+        │ └─StreamAgg_63;1487616.00;root;;group by:test.lineitem.l_orderkey, funcs:sum(test.lineitem.l_quantity)->Column#52, funcs:firstrow(test.lineitem.l_orderkey)->test.lineitem.l_orderkey
+        │   └─Projection_67;6001215.00;root;;test.lineitem.l_orderkey, test.lineitem.l_quantity
+        │     └─IndexLookUp_66;6001215.00;root;;
+        │       ├─IndexFullScan_64(Build);6001215.00;cop[tikv];table:lineitem, index:PRIMARY(L_ORDERKEY, L_LINENUMBER);keep order:true
+        │       └─TableRowIDScan_65(Probe);6001215.00;cop[tikv];table:lineitem;keep order:false
+        └─IndexHashJoin_57(Probe);1504332.48;root;;inner join, inner:TableReader_52, outer key:test.orders.o_custkey, inner key:test.customer.c_custkey, equal cond:eq(test.orders.o_custkey, test.customer.c_custkey)
+          ├─TableReader_60(Build);1500000.00;root;;data:TableFullScan_59
+          │ └─TableFullScan_59;1500000.00;cop[tikv];table:orders;keep order:true
+          └─TableReader_52(Probe);1.00;root;;data:TableRangeScan_51
+            └─TableRangeScan_51;1.00;cop[tikv];table:customer;range: decided by [test.orders.o_custkey], keep order:false

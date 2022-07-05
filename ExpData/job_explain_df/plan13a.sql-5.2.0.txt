@@ -1,0 +1,35 @@
+StreamAgg_41;1.00;root;;funcs:min(test.movie_info.info)->Column#43, funcs:min(test.movie_info_idx.info)->Column#44, funcs:min(test.title.title)->Column#45
+└─Projection_42;0.00;root;;test.movie_info.info, test.movie_info_idx.info, test.title.title
+  └─IndexJoin_50;0.00;root;;inner join, inner:TableReader_46, outer key:test.movie_info.info_type_id, inner key:test.info_type.id, equal cond:eq(test.movie_info.info_type_id, test.info_type.id)
+    ├─IndexHashJoin_62(Build);0.00;root;;inner join, inner:IndexLookUp_59, outer key:test.title.id, inner key:test.movie_info.movie_id, equal cond:eq(test.movie_companies.movie_id, test.movie_info.movie_id), eq(test.movie_info_idx.movie_id, test.movie_info.movie_id), eq(test.title.id, test.movie_info.movie_id)
+    │ ├─IndexJoin_77(Build);0.00;root;;inner join, inner:TableReader_73, outer key:test.title.kind_id, inner key:test.kind_type.id, equal cond:eq(test.title.kind_id, test.kind_type.id)
+    │ │ ├─IndexJoin_88(Build);0.11;root;;inner join, inner:TableReader_85, outer key:test.movie_companies.movie_id, test.movie_info_idx.movie_id, inner key:test.title.id, test.title.id, equal cond:eq(test.movie_companies.movie_id, test.title.id), eq(test.movie_info_idx.movie_id, test.title.id)
+    │ │ │ ├─HashJoin_106(Build);0.11;root;;inner join, equal:[eq(test.movie_info_idx.info_type_id, test.info_type.id)]
+    │ │ │ │ ├─TableReader_231(Build);0.11;root;;data:Selection_230
+    │ │ │ │ │ └─Selection_230;0.11;cop[tikv];;eq(test.info_type.info, "rating")
+    │ │ │ │ │   └─TableFullScan_229;113.00;cop[tikv];table:it;keep order:false
+    │ │ │ │ └─HashJoin_123(Probe);6596.17;root;;inner join, equal:[eq(test.movie_companies.movie_id, test.movie_info_idx.movie_id)]
+    │ │ │ │   ├─IndexJoin_161(Build);5276.93;root;;inner join, inner:TableReader_157, outer key:test.movie_companies.company_id, inner key:test.company_name.id, equal cond:eq(test.movie_companies.company_id, test.company_name.id)
+    │ │ │ │   │ ├─IndexHashJoin_192(Build);5218.26;root;;inner join, inner:IndexLookUp_189, outer key:test.company_type.id, inner key:test.movie_companies.company_type_id, equal cond:eq(test.company_type.id, test.movie_companies.company_type_id)
+    │ │ │ │   │ │ ├─TableReader_221(Build);0.00;root;;data:Selection_220
+    │ │ │ │   │ │ │ └─Selection_220;0.00;cop[tikv];;eq(test.company_type.kind, "production companies")
+    │ │ │ │   │ │ │   └─TableFullScan_219;4.00;cop[tikv];table:ct;keep order:false
+    │ │ │ │   │ │ └─IndexLookUp_189(Probe);1304564.50;root;;
+    │ │ │ │   │ │   ├─IndexRangeScan_187(Build);1304564.50;cop[tikv];table:mc, index:company_type_id_movie_companies(company_type_id);range: decided by [eq(test.movie_companies.company_type_id, test.company_type.id)], keep order:false
+    │ │ │ │   │ │   └─TableRowIDScan_188(Probe);1304564.50;cop[tikv];table:mc;keep order:false
+    │ │ │ │   │ └─TableReader_157(Probe);0.04;root;;data:Selection_156
+    │ │ │ │   │   └─Selection_156;0.04;cop[tikv];;eq(test.company_name.country_code, "[de]")
+    │ │ │ │   │     └─TableRangeScan_155;1.00;cop[tikv];table:cn;range: decided by [test.movie_companies.company_id], keep order:false
+    │ │ │ │   └─TableReader_228(Probe);10000.00;root;;data:TableFullScan_227
+    │ │ │ │     └─TableFullScan_227;10000.00;cop[tikv];table:miidx;keep order:false, stats:pseudo
+    │ │ │ └─TableReader_85(Probe);1.00;root;;data:TableRangeScan_84
+    │ │ │   └─TableRangeScan_84;1.00;cop[tikv];table:t;range: decided by [test.movie_companies.movie_id test.movie_info_idx.movie_id], keep order:false
+    │ │ └─TableReader_73(Probe);0.00;root;;data:Selection_72
+    │ │   └─Selection_72;0.00;cop[tikv];;eq(test.kind_type.kind, "movie")
+    │ │     └─TableRangeScan_71;1.00;cop[tikv];table:kt;range: decided by [test.title.kind_id], keep order:false
+    │ └─IndexLookUp_59(Probe);6.00;root;;
+    │   ├─IndexRangeScan_57(Build);6.00;cop[tikv];table:mi, index:movie_id_movie_info(movie_id);range: decided by [eq(test.movie_info.movie_id, test.title.id)], keep order:false
+    │   └─TableRowIDScan_58(Probe);6.00;cop[tikv];table:mi;keep order:false
+    └─TableReader_46(Probe);0.00;root;;data:Selection_45
+      └─Selection_45;0.00;cop[tikv];;eq(test.info_type.info, "release dates")
+        └─TableRangeScan_44;1.00;cop[tikv];table:it2;range: decided by [test.movie_info.info_type_id], keep order:false

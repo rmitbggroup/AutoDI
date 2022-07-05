@@ -1,0 +1,17 @@
+Projection_25;100.00;root;;test.customer.c_name, test.customer.c_custkey, test.orders.o_orderkey, test.orders.o_orderdate, test.orders.o_totalprice, Column#54
+└─TopN_28;100.00;root;;test.orders.o_totalprice:desc, test.orders.o_orderdate, offset:0, count:100
+  └─HashAgg_33;1203465.98;root;;group by:test.customer.c_custkey, test.customer.c_name, test.orders.o_orderdate, test.orders.o_orderkey, test.orders.o_totalprice, funcs:sum(test.lineitem.l_quantity)->Column#54, funcs:firstrow(test.customer.c_custkey)->test.customer.c_custkey, funcs:firstrow(test.customer.c_name)->test.customer.c_name, funcs:firstrow(test.orders.o_orderkey)->test.orders.o_orderkey, funcs:firstrow(test.orders.o_totalprice)->test.orders.o_totalprice, funcs:firstrow(test.orders.o_orderdate)->test.orders.o_orderdate
+    └─HashJoin_49;4854920.96;root;;inner join, equal:[eq(test.orders.o_orderkey, test.lineitem.l_orderkey)]
+      ├─HashJoin_73(Build);1203465.98;root;;inner join, equal:[eq(test.orders.o_orderkey, test.lineitem.l_orderkey)]
+      │ ├─Selection_90(Build);1190092.80;root;;gt(Column#52, 314)
+      │ │ └─HashAgg_97;1487616.00;root;;group by:test.lineitem.l_orderkey, funcs:sum(Column#66)->Column#52, funcs:firstrow(test.lineitem.l_orderkey)->test.lineitem.l_orderkey
+      │ │   └─TableReader_98;1487616.00;root;;data:HashAgg_91
+      │ │     └─HashAgg_91;1487616.00;cop[tikv];;group by:test.lineitem.l_orderkey, funcs:sum(test.lineitem.l_quantity)->Column#66
+      │ │       └─TableFullScan_96;6001215.00;cop[tikv];table:lineitem;keep order:false
+      │ └─HashJoin_85(Probe);1504332.48;root;;inner join, equal:[eq(test.customer.c_custkey, test.orders.o_custkey)]
+      │   ├─TableReader_89(Build);150000.00;root;;data:TableFullScan_88
+      │   │ └─TableFullScan_88;150000.00;cop[tikv];table:customer;keep order:false
+      │   └─TableReader_87(Probe);1500000.00;root;;data:TableFullScan_86
+      │     └─TableFullScan_86;1500000.00;cop[tikv];table:orders;keep order:false
+      └─TableReader_102(Probe);6001215.00;root;;data:TableFullScan_101
+        └─TableFullScan_101;6001215.00;cop[tikv];table:lineitem;keep order:false

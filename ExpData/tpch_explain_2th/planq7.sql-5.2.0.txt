@@ -1,0 +1,25 @@
+Sort_23;769.75;root;;test.nation.n_name, test.nation.n_name, Column#50
+└─Projection_25;769.75;root;;test.nation.n_name, test.nation.n_name, Column#50, Column#52
+  └─HashAgg_26;769.75;root;;group by:Column#59, Column#60, Column#61, funcs:sum(Column#55)->Column#52, funcs:firstrow(Column#56)->test.nation.n_name, funcs:firstrow(Column#57)->test.nation.n_name, funcs:firstrow(Column#58)->Column#50
+    └─Projection_84;38839.37;root;;mul(test.lineitem.l_extendedprice, minus(1, test.lineitem.l_discount))->Column#55, test.nation.n_name, test.nation.n_name, extract(YEAR, test.lineitem.l_shipdate)->Column#58, test.nation.n_name, test.nation.n_name, extract(YEAR, test.lineitem.l_shipdate)->Column#61
+      └─Projection_27;38839.37;root;;test.lineitem.l_extendedprice, test.lineitem.l_discount, test.lineitem.l_shipdate, test.nation.n_name, test.nation.n_name
+        └─IndexJoin_34;38839.37;root;;inner join, inner:TableReader_30, outer key:test.customer.c_nationkey, inner key:test.nation.n_nationkey, equal cond:eq(test.customer.c_nationkey, test.nation.n_nationkey), other cond:or(and(eq(test.nation.n_name, "JAPAN"), eq(test.nation.n_name, "INDIA")), and(eq(test.nation.n_name, "INDIA"), eq(test.nation.n_name, "JAPAN")))
+          ├─IndexJoin_45(Build);485492.10;root;;inner join, inner:TableReader_42, outer key:test.orders.o_custkey, inner key:test.customer.c_custkey, equal cond:eq(test.orders.o_custkey, test.customer.c_custkey)
+          │ ├─IndexJoin_57(Build);484093.88;root;;inner join, inner:TableReader_54, outer key:test.lineitem.l_orderkey, inner key:test.orders.o_orderkey, equal cond:eq(test.lineitem.l_orderkey, test.orders.o_orderkey)
+          │ │ ├─HashJoin_64(Build);480097.20;root;;inner join, equal:[eq(test.supplier.s_suppkey, test.lineitem.l_suppkey)]
+          │ │ │ ├─TableReader_83(Build);1828754.91;root;;data:Selection_82
+          │ │ │ │ └─Selection_82;1828754.91;cop[tikv];;ge(test.lineitem.l_shipdate, 1995-01-01 00:00:00.000000), le(test.lineitem.l_shipdate, 1996-12-31 00:00:00.000000)
+          │ │ │ │   └─TableFullScan_81;6001215.00;cop[tikv];table:lineitem;keep order:false
+          │ │ │ └─IndexHashJoin_74(Probe);800.00;root;;inner join, inner:TableReader_68, outer key:test.supplier.s_nationkey, inner key:test.nation.n_nationkey, equal cond:eq(test.supplier.s_nationkey, test.nation.n_nationkey)
+          │ │ │   ├─TableReader_80(Build);10000.00;root;;data:TableFullScan_79
+          │ │ │   │ └─TableFullScan_79;10000.00;cop[tikv];table:supplier;keep order:false
+          │ │ │   └─TableReader_68(Probe);0.08;root;;data:Selection_67
+          │ │ │     └─Selection_67;0.08;cop[tikv];;or(eq(test.nation.n_name, "JAPAN"), eq(test.nation.n_name, "INDIA"))
+          │ │ │       └─TableRangeScan_66;1.00;cop[tikv];table:n1;range: decided by [test.supplier.s_nationkey], keep order:false
+          │ │ └─TableReader_54(Probe);1.00;root;;data:TableRangeScan_53
+          │ │   └─TableRangeScan_53;1.00;cop[tikv];table:orders;range: decided by [test.lineitem.l_orderkey], keep order:false
+          │ └─TableReader_42(Probe);1.00;root;;data:TableRangeScan_41
+          │   └─TableRangeScan_41;1.00;cop[tikv];table:customer;range: decided by [test.orders.o_custkey], keep order:false
+          └─TableReader_30(Probe);0.08;root;;data:Selection_29
+            └─Selection_29;0.08;cop[tikv];;or(eq(test.nation.n_name, "INDIA"), eq(test.nation.n_name, "JAPAN"))
+              └─TableRangeScan_28;1.00;cop[tikv];table:n2;range: decided by [test.customer.c_nationkey], keep order:false

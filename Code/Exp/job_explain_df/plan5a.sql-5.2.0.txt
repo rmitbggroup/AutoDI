@@ -1,0 +1,22 @@
+StreamAgg_25;1.00;root;;funcs:min(test.title.title)->Column#27
+└─TopN_28;1.00;root;;test.title.title, offset:0, count:1
+  └─IndexJoin_40;31331.59;root;;inner join, inner:TableReader_36, outer key:test.movie_info.movie_id, test.movie_companies.movie_id, inner key:test.title.id, test.title.id, equal cond:eq(test.movie_companies.movie_id, test.title.id), eq(test.movie_info.movie_id, test.title.id)
+    ├─HashJoin_56(Build);31318.21;root;;inner join, equal:[eq(test.movie_info.info_type_id, test.info_type.id)]
+    │ ├─TableReader_143(Build);113.00;root;;data:TableFullScan_142
+    │ │ └─TableFullScan_142;113.00;cop[tikv];table:it;keep order:false
+    │ └─IndexHashJoin_66(Probe);31318.21;root;;inner join, inner:IndexLookUp_63, outer key:test.movie_companies.movie_id, inner key:test.movie_info.movie_id, equal cond:eq(test.movie_companies.movie_id, test.movie_info.movie_id)
+    │   ├─IndexHashJoin_104(Build);5218.26;root;;inner join, inner:IndexLookUp_101, outer key:test.company_type.id, inner key:test.movie_companies.company_type_id, equal cond:eq(test.company_type.id, test.movie_companies.company_type_id)
+    │   │ ├─TableReader_135(Build);0.00;root;;data:Selection_134
+    │   │ │ └─Selection_134;0.00;cop[tikv];;eq(test.company_type.kind, "production companies")
+    │   │ │   └─TableFullScan_133;4.00;cop[tikv];table:ct;keep order:false
+    │   │ └─IndexLookUp_101(Probe);1304564.50;root;;
+    │   │   ├─IndexRangeScan_98(Build);1630705.63;cop[tikv];table:mc, index:company_type_id_movie_companies(company_type_id);range: decided by [eq(test.movie_companies.company_type_id, test.company_type.id)], keep order:false
+    │   │   └─Selection_100(Probe);1304564.50;cop[tikv];;like(test.movie_companies.note, "%(France)%", 92), like(test.movie_companies.note, "%(theatrical)%", 92)
+    │   │     └─TableRowIDScan_99;1630705.63;cop[tikv];table:mc;keep order:false
+    │   └─IndexLookUp_63(Probe);6.00;root;;
+    │     ├─IndexRangeScan_60(Build);750.21;cop[tikv];table:mi, index:movie_id_movie_info(movie_id);range: decided by [eq(test.movie_info.movie_id, test.movie_companies.movie_id)], keep order:false
+    │     └─Selection_62(Probe);6.00;cop[tikv];;in(test.movie_info.info, "Sweden", "Norway", "Germany", "Denmark", "Swedish", "Denish", "Norwegian", "German")
+    │       └─TableRowIDScan_61;750.21;cop[tikv];table:mi;keep order:false
+    └─TableReader_36(Probe);0.40;root;;data:Selection_35
+      └─Selection_35;0.40;cop[tikv];;gt(test.title.production_year, 2005)
+        └─TableRangeScan_34;1.00;cop[tikv];table:t;range: decided by [test.movie_info.movie_id test.movie_companies.movie_id], keep order:false

@@ -1,0 +1,11 @@
+Sort_10;1.00;root;;test.lineitem.l_shipmode
+└─Projection_12;1.00;root;;test.lineitem.l_shipmode, Column#27, Column#28
+  └─HashAgg_13;1.00;root;;group by:Column#72, funcs:sum(Column#69)->Column#27, funcs:sum(Column#70)->Column#28, funcs:firstrow(Column#71)->test.lineitem.l_shipmode
+    └─Projection_51;205477.39;root;;cast(case(or(eq(test.orders.o_orderpriority, 1-URGENT), eq(test.orders.o_orderpriority, 2-HIGH)), 1, 0), decimal(22,0) BINARY)->Column#69, cast(case(and(ne(test.orders.o_orderpriority, 1-URGENT), ne(test.orders.o_orderpriority, 2-HIGH)), 1, 0), decimal(22,0) BINARY)->Column#70, test.lineitem.l_shipmode, test.lineitem.l_shipmode
+      └─Projection_14;205477.39;root;;test.orders.o_orderpriority, test.lineitem.l_shipmode
+        └─IndexJoin_20;205477.39;root;;inner join, inner:TableReader_17, outer key:test.lineitem.l_orderkey, inner key:test.orders.o_orderkey, equal cond:eq(test.lineitem.l_orderkey, test.orders.o_orderkey)
+          ├─TableReader_50(Build);203780.97;root;;data:Selection_49
+          │ └─Selection_49;203780.97;cop[tikv];;ge(test.lineitem.l_receiptdate, 1997-01-01 00:00:00.000000), in(test.lineitem.l_shipmode, "RAIL", "FOB"), lt(test.lineitem.l_commitdate, test.lineitem.l_receiptdate), lt(test.lineitem.l_receiptdate, 1998-01-01), lt(test.lineitem.l_shipdate, test.lineitem.l_commitdate)
+          │   └─TableFullScan_48;6001215.00;cop[tikv];table:lineitem;keep order:false
+          └─TableReader_17(Probe);1.00;root;;data:TableRangeScan_16
+            └─TableRangeScan_16;1.00;cop[tikv];table:orders;range: decided by [test.lineitem.l_orderkey], keep order:false

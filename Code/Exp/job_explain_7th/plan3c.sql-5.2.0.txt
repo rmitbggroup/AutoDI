@@ -1,0 +1,17 @@
+HashAgg_20;1.00;root;;funcs:min(test.title.title)->Column#24
+└─TopN_24;1.00;root;;test.title.title, offset:0, count:1
+  └─IndexJoin_34;1447769.12;root;;inner join, inner:IndexLookUp_33, outer key:test.title.id, inner key:test.movie_info.movie_id, equal cond:eq(test.movie_keyword.movie_id, test.movie_info.movie_id), eq(test.title.id, test.movie_info.movie_id)
+    ├─IndexJoin_52(Build);3627883.12;root;;inner join, inner:TableReader_48, outer key:test.movie_keyword.movie_id, inner key:test.title.id, equal cond:eq(test.movie_keyword.movie_id, test.title.id)
+    │ ├─IndexHashJoin_98(Build);3626333.42;root;;inner join, inner:TableReader_92, outer key:test.movie_keyword.keyword_id, inner key:test.keyword.id, equal cond:eq(test.movie_keyword.keyword_id, test.keyword.id)
+    │ │ ├─TableReader_114(Build);4523930.00;root;;data:TableFullScan_113
+    │ │ │ └─TableFullScan_113;4523930.00;cop[tikv];table:mk;keep order:false
+    │ │ └─TableReader_92(Probe);0.80;root;;data:Selection_91
+    │ │   └─Selection_91;0.80;cop[tikv];;like(test.keyword.keyword, "%sequel%", 92)
+    │ │     └─TableRangeScan_90;1.00;cop[tikv];table:k;range: decided by [test.movie_keyword.keyword_id], keep order:false
+    │ └─TableReader_48(Probe);0.69;root;;data:Selection_47
+    │   └─Selection_47;0.69;cop[tikv];;gt(test.title.production_year, 1990)
+    │     └─TableRangeScan_46;1.00;cop[tikv];table:t;range: decided by [test.movie_keyword.movie_id], keep order:false
+    └─IndexLookUp_33(Probe);0.40;root;;
+      ├─IndexRangeScan_30(Build);8.53;cop[tikv];table:mi, index:movie_id_movie_info(movie_id);range: decided by [eq(test.movie_info.movie_id, test.title.id)], keep order:false
+      └─Selection_32(Probe);0.40;cop[tikv];;in(test.movie_info.info, "Sweden", "Norway", "Germany", "Denmark", "Swedish", "Denish", "Norwegian", "German", "USA", "American")
+        └─TableRowIDScan_31;8.53;cop[tikv];table:mi;keep order:false

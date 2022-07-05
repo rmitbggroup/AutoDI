@@ -1,0 +1,28 @@
+HashAgg_31;1.00;root;;funcs:min(test.movie_info.info)->Column#43, funcs:min(test.movie_info_idx.info)->Column#44, funcs:min(test.title.title)->Column#45
+└─IndexJoin_38;116.93;root;;inner join, inner:TableReader_35, outer key:test.movie_info.movie_id, test.movie_info_idx.movie_id, test.cast_info.movie_id, inner key:test.title.id, test.title.id, test.title.id, equal cond:eq(test.cast_info.movie_id, test.title.id), eq(test.movie_info.movie_id, test.title.id), eq(test.movie_info_idx.movie_id, test.title.id)
+  ├─IndexJoin_51(Build);116.88;root;;inner join, inner:TableReader_47, outer key:test.cast_info.person_id, inner key:test.name.id, equal cond:eq(test.cast_info.person_id, test.name.id)
+  │ ├─IndexJoin_62(Build);115.99;root;;inner join, inner:IndexLookUp_61, outer key:test.movie_info_idx.movie_id, inner key:test.cast_info.movie_id, equal cond:eq(test.movie_info.movie_id, test.cast_info.movie_id), eq(test.movie_info_idx.movie_id, test.cast_info.movie_id)
+  │ │ ├─IndexJoin_80(Build);7.50;root;;inner join, inner:TableReader_76, outer key:test.movie_info_idx.info_type_id, inner key:test.info_type.id, equal cond:eq(test.movie_info_idx.info_type_id, test.info_type.id)
+  │ │ │ ├─IndexJoin_92(Build);60016.60;root;;inner join, inner:IndexLookUp_91, outer key:test.movie_info.movie_id, inner key:test.movie_info_idx.movie_id, equal cond:eq(test.movie_info.movie_id, test.movie_info_idx.movie_id)
+  │ │ │ │ ├─IndexHashJoin_146(Build);185740.00;root;;inner join, inner:TableReader_140, outer key:test.movie_info.info_type_id, inner key:test.info_type.id, equal cond:eq(test.movie_info.info_type_id, test.info_type.id)
+  │ │ │ │ │ ├─TableReader_164(Build);185740.00;root;;data:Selection_163
+  │ │ │ │ │ │ └─Selection_163;185740.00;cop[tikv];;in(test.movie_info.info, "Horror", "Action", "Sci-Fi", "Thriller", "Crime", "War")
+  │ │ │ │ │ │   └─TableFullScan_162;14835720.00;cop[tikv];table:mi;keep order:false
+  │ │ │ │ │ └─TableReader_140(Probe);0.01;root;;data:Selection_139
+  │ │ │ │ │   └─Selection_139;0.01;cop[tikv];;eq(test.info_type.info, "genres")
+  │ │ │ │ │     └─TableRangeScan_138;1.00;cop[tikv];table:it1;range: decided by [test.movie_info.info_type_id], keep order:false
+  │ │ │ │ └─IndexLookUp_91(Probe);0.32;root;;
+  │ │ │ │   ├─IndexRangeScan_89(Build);0.32;cop[tikv];table:mi_idx, index:movie_id_movie_info_idx(movie_id);range: decided by [eq(test.movie_info_idx.movie_id, test.movie_info.movie_id)], keep order:false, stats:pseudo
+  │ │ │ │   └─TableRowIDScan_90(Probe);0.32;cop[tikv];table:mi_idx;keep order:false, stats:pseudo
+  │ │ │ └─TableReader_76(Probe);0.00;root;;data:Selection_75
+  │ │ │   └─Selection_75;0.00;cop[tikv];;eq(test.info_type.info, "votes")
+  │ │ │     └─TableRangeScan_74;0.01;cop[tikv];table:it2;range: decided by [test.movie_info_idx.info_type_id], keep order:false
+  │ │ └─IndexLookUp_61(Probe);15.46;root;;
+  │ │   ├─IndexRangeScan_58(Build);451.58;cop[tikv];table:ci, index:movie_id_cast_info(movie_id);range: decided by [eq(test.cast_info.movie_id, test.movie_info_idx.movie_id)], keep order:false
+  │ │   └─Selection_60(Probe);15.46;cop[tikv];;in(test.cast_info.note, "(writer)", "(head writer)", "(written by)", "(story)", "(story editor)")
+  │ │     └─TableRowIDScan_59;451.58;cop[tikv];table:ci;keep order:false
+  │ └─TableReader_47(Probe);0.41;root;;data:Selection_46
+  │   └─Selection_46;0.41;cop[tikv];;eq(test.name.gender, "m")
+  │     └─TableRangeScan_45;1.00;cop[tikv];table:n;range: decided by [test.cast_info.person_id], keep order:false
+  └─TableReader_35(Probe);1.00;root;;data:TableRangeScan_34
+    └─TableRangeScan_34;1.00;cop[tikv];table:t;range: decided by [test.movie_info.movie_id test.movie_info_idx.movie_id test.cast_info.movie_id], keep order:false

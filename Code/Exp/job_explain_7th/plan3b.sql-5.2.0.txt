@@ -1,0 +1,17 @@
+HashAgg_20;1.00;root;;funcs:min(test.title.title)->Column#24
+└─TopN_24;1.00;root;;test.title.title, offset:0, count:1
+  └─IndexJoin_37;24045.92;root;;inner join, inner:TableReader_33, outer key:test.movie_keyword.keyword_id, inner key:test.keyword.id, equal cond:eq(test.movie_keyword.keyword_id, test.keyword.id)
+    ├─IndexJoin_47(Build);23998.25;root;;inner join, inner:IndexLookUp_46, outer key:test.title.id, inner key:test.movie_keyword.movie_id, equal cond:eq(test.movie_info.movie_id, test.movie_keyword.movie_id), eq(test.title.id, test.movie_keyword.movie_id)
+    │ ├─HashJoin_84(Build);2517.08;root;;inner join, equal:[eq(test.movie_info.movie_id, test.title.id)]
+    │ │ ├─TableReader_95(Build);2516.00;root;;data:Selection_94
+    │ │ │ └─Selection_94;2516.00;cop[tikv];;eq(test.movie_info.info, "Bulgaria")
+    │ │ │   └─TableFullScan_93;14835720.00;cop[tikv];table:mi;keep order:false
+    │ │ └─TableReader_98(Probe);392607.25;root;;data:Selection_97
+    │ │   └─Selection_97;392607.25;cop[tikv];;gt(test.title.production_year, 2010)
+    │ │     └─TableFullScan_96;2528312.00;cop[tikv];table:t;keep order:false
+    │ └─IndexLookUp_46(Probe);9.53;root;;
+    │   ├─IndexRangeScan_44(Build);9.53;cop[tikv];table:mk, index:movie_id_movie_keyword(movie_id);range: decided by [eq(test.movie_keyword.movie_id, test.title.id)], keep order:false
+    │   └─TableRowIDScan_45(Probe);9.53;cop[tikv];table:mk;keep order:false
+    └─TableReader_33(Probe);0.80;root;;data:Selection_32
+      └─Selection_32;0.80;cop[tikv];;like(test.keyword.keyword, "%sequel%", 92)
+        └─TableRangeScan_31;1.00;cop[tikv];table:k;range: decided by [test.movie_keyword.keyword_id], keep order:false

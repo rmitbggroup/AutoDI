@@ -1,0 +1,19 @@
+Projection_18;20.00;root;;test.customer.c_custkey, test.customer.c_name, Column#39, test.customer.c_acctbal, test.nation.n_name, test.customer.c_address, test.customer.c_phone, test.customer.c_comment
+└─TopN_21;20.00;root;;Column#39:desc, offset:0, count:20
+  └─HashAgg_26;57983.66;root;;group by:Column#73, Column#74, Column#75, Column#76, Column#77, Column#78, Column#79, funcs:sum(Column#65)->Column#39, funcs:firstrow(Column#66)->test.customer.c_custkey, funcs:firstrow(Column#67)->test.customer.c_name, funcs:firstrow(Column#68)->test.customer.c_address, funcs:firstrow(Column#69)->test.customer.c_phone, funcs:firstrow(Column#70)->test.customer.c_acctbal, funcs:firstrow(Column#71)->test.customer.c_comment, funcs:firstrow(Column#72)->test.nation.n_name
+    └─Projection_63;233912.79;root;;mul(test.lineitem.l_extendedprice, minus(1, test.lineitem.l_discount))->Column#65, test.customer.c_custkey, test.customer.c_name, test.customer.c_address, test.customer.c_phone, test.customer.c_acctbal, test.customer.c_comment, test.nation.n_name, test.customer.c_custkey, test.customer.c_name, test.customer.c_acctbal, test.customer.c_phone, test.nation.n_name, test.customer.c_address, test.customer.c_comment
+      └─Projection_27;233912.79;root;;test.customer.c_custkey, test.customer.c_name, test.customer.c_address, test.customer.c_phone, test.customer.c_acctbal, test.customer.c_comment, test.lineitem.l_extendedprice, test.lineitem.l_discount, test.nation.n_name
+        └─IndexJoin_33;233912.79;root;;inner join, inner:IndexLookUp_32, outer key:test.orders.o_orderkey, inner key:test.lineitem.l_orderkey, equal cond:eq(test.orders.o_orderkey, test.lineitem.l_orderkey)
+          ├─HashJoin_45(Build);57983.66;root;;inner join, equal:[eq(test.customer.c_custkey, test.orders.o_custkey)]
+          │ ├─TableReader_62(Build);57816.67;root;;data:Selection_61
+          │ │ └─Selection_61;57816.67;cop[tikv];;ge(test.orders.o_orderdate, 1993-08-01 00:00:00.000000), lt(test.orders.o_orderdate, 1993-11-01)
+          │ │   └─TableFullScan_60;1500000.00;cop[tikv];table:orders;keep order:false
+          │ └─IndexHashJoin_53(Probe);150000.00;root;;inner join, inner:TableReader_48, outer key:test.customer.c_nationkey, inner key:test.nation.n_nationkey, equal cond:eq(test.customer.c_nationkey, test.nation.n_nationkey)
+          │   ├─TableReader_59(Build);150000.00;root;;data:TableFullScan_58
+          │   │ └─TableFullScan_58;150000.00;cop[tikv];table:customer;keep order:false
+          │   └─TableReader_48(Probe);1.00;root;;data:TableRangeScan_47
+          │     └─TableRangeScan_47;1.00;cop[tikv];table:nation;range: decided by [test.customer.c_nationkey], keep order:false
+          └─IndexLookUp_32(Probe);4.03;root;;
+            ├─IndexRangeScan_29(Build);16.22;cop[tikv];table:lineitem, index:PRIMARY(L_ORDERKEY, L_LINENUMBER);range: decided by [eq(test.lineitem.l_orderkey, test.orders.o_orderkey)], keep order:false
+            └─Selection_31(Probe);4.03;cop[tikv];;eq(test.lineitem.l_returnflag, "R")
+              └─TableRowIDScan_30;16.22;cop[tikv];table:lineitem;keep order:false
