@@ -1,0 +1,19 @@
+HashAgg_23;1.00;root;;funcs:min(test.title.title)->Column#31
+└─TopN_27;1.00;root;;test.title.title, offset:0, count:1
+  └─IndexJoin_40;82.57;root;;inner join, inner:TableReader_36, outer key:test.movie_companies.company_id, inner key:test.company_name.id, equal cond:eq(test.movie_companies.company_id, test.company_name.id)
+    ├─IndexJoin_50(Build);81.65;root;;inner join, inner:IndexLookUp_49, outer key:test.title.id, inner key:test.movie_companies.movie_id, equal cond:eq(test.movie_keyword.movie_id, test.movie_companies.movie_id), eq(test.title.id, test.movie_companies.movie_id)
+    │ ├─IndexJoin_65(Build);34.14;root;;inner join, inner:TableReader_62, outer key:test.movie_keyword.movie_id, inner key:test.title.id, equal cond:eq(test.movie_keyword.movie_id, test.title.id)
+    │ │ ├─IndexHashJoin_110(Build);34.13;root;;inner join, inner:TableReader_104, outer key:test.movie_keyword.keyword_id, inner key:test.keyword.id, equal cond:eq(test.movie_keyword.keyword_id, test.keyword.id)
+    │ │ │ ├─TableReader_126(Build);4523930.00;root;;data:TableFullScan_125
+    │ │ │ │ └─TableFullScan_125;4523930.00;cop[tikv];table:mk;keep order:false
+    │ │ │ └─TableReader_104(Probe);0.00;root;;data:Selection_103
+    │ │ │   └─Selection_103;0.00;cop[tikv];;eq(test.keyword.keyword, "character-name-in-title")
+    │ │ │     └─TableRangeScan_102;1.00;cop[tikv];table:k;range: decided by [test.movie_keyword.keyword_id], keep order:false
+    │ │ └─TableReader_62(Probe);1.00;root;;data:TableRangeScan_61
+    │ │   └─TableRangeScan_61;1.00;cop[tikv];table:t;range: decided by [test.movie_keyword.movie_id], keep order:false
+    │ └─IndexLookUp_49(Probe);2.39;root;;
+    │   ├─IndexRangeScan_47(Build);2.39;cop[tikv];table:mc, index:movie_id_movie_companies(movie_id);range: decided by [eq(test.movie_companies.movie_id, test.title.id)], keep order:false
+    │   └─TableRowIDScan_48(Probe);2.39;cop[tikv];table:mc;keep order:false
+    └─TableReader_36(Probe);0.04;root;;data:Selection_35
+      └─Selection_35;0.04;cop[tikv];;eq(test.company_name.country_code, "[de]")
+        └─TableRangeScan_34;1.00;cop[tikv];table:cn;range: decided by [test.movie_companies.company_id], keep order:false

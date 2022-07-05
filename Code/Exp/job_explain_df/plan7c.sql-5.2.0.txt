@@ -1,0 +1,34 @@
+StreamAgg_33;1.00;root;;funcs:min(test.name.name)->Column#50, funcs:min(test.person_info.info)->Column#51
+└─HashJoin_206;4.56;root;;inner join, equal:[eq(test.person_info.info_type_id, test.info_type.id)]
+  ├─TableReader_192(Build);0.11;root;;data:Selection_191
+  │ └─Selection_191;0.11;cop[tikv];;eq(test.info_type.info, "mini biography")
+  │   └─TableFullScan_190;113.00;cop[tikv];table:it;keep order:false
+  └─IndexHashJoin_55(Probe);886.34;root;;inner join, inner:IndexLookUp_52, outer key:test.name.id, inner key:test.person_info.person_id, equal cond:eq(test.aka_name.person_id, test.person_info.person_id), eq(test.cast_info.person_id, test.person_info.person_id), eq(test.name.id, test.person_info.person_id)
+    ├─IndexHashJoin_70(Build);164.21;root;;inner join, inner:IndexLookUp_67, outer key:test.name.id, inner key:test.aka_name.person_id, equal cond:eq(test.cast_info.person_id, test.aka_name.person_id), eq(test.name.id, test.aka_name.person_id)
+    │ ├─IndexJoin_86(Build);106.79;root;;inner join, inner:TableReader_82, outer key:test.cast_info.person_id, inner key:test.name.id, equal cond:eq(test.cast_info.person_id, test.name.id)
+    │ │ ├─IndexHashJoin_98(Build);2087.96;root;;inner join, inner:IndexLookUp_95, outer key:test.title.id, inner key:test.cast_info.movie_id, equal cond:eq(test.movie_link.linked_movie_id, test.cast_info.movie_id), eq(test.title.id, test.cast_info.movie_id)
+    │ │ │ ├─IndexJoin_113(Build);135.04;root;;inner join, inner:TableReader_109, outer key:test.movie_link.linked_movie_id, inner key:test.title.id, equal cond:eq(test.movie_link.linked_movie_id, test.title.id)
+    │ │ │ │ ├─IndexHashJoin_144(Build);134.99;root;;inner join, inner:IndexLookUp_141, outer key:test.link_type.id, inner key:test.movie_link.link_type_id, equal cond:eq(test.link_type.id, test.movie_link.link_type_id)
+    │ │ │ │ │ ├─TableReader_173(Build);0.07;root;;data:Selection_172
+    │ │ │ │ │ │ └─Selection_172;0.07;cop[tikv];;in(test.link_type.link, "references", "referenced in", "features", "featured in")
+    │ │ │ │ │ │   └─TableFullScan_171;18.00;cop[tikv];table:lt;keep order:false
+    │ │ │ │ │ └─IndexLookUp_141(Probe);1874.81;root;;
+    │ │ │ │ │   ├─IndexRangeScan_139(Build);1874.81;cop[tikv];table:ml, index:link_type_id_movie_link(link_type_id);range: decided by [eq(test.movie_link.link_type_id, test.link_type.id)], keep order:false
+    │ │ │ │ │   └─TableRowIDScan_140(Probe);1874.81;cop[tikv];table:ml;keep order:false
+    │ │ │ │ └─TableReader_109(Probe);0.61;root;;data:Selection_108
+    │ │ │ │   └─Selection_108;0.61;cop[tikv];;ge(test.title.production_year, 1980), le(test.title.production_year, 2010)
+    │ │ │ │     └─TableRangeScan_107;1.00;cop[tikv];table:t;range: decided by [test.movie_link.linked_movie_id], keep order:false
+    │ │ │ └─IndexLookUp_95(Probe);15.46;root;;
+    │ │ │   ├─IndexRangeScan_93(Build);15.46;cop[tikv];table:ci, index:movie_id_cast_info(movie_id);range: decided by [eq(test.cast_info.movie_id, test.title.id)], keep order:false
+    │ │ │   └─TableRowIDScan_94(Probe);15.46;cop[tikv];table:ci;keep order:false
+    │ │ └─TableReader_82(Probe);0.00;root;;data:Selection_81
+    │ │   └─Selection_81;0.00;cop[tikv];;ge(test.name.name_pcode_cf, "A"), le(test.name.name_pcode_cf, "F"), or(eq(test.name.gender, "m"), and(eq(test.name.gender, "f"), like(test.name.name, "A%", 92)))
+    │ │     └─TableRangeScan_80;1.00;cop[tikv];table:n;range: decided by [test.cast_info.person_id], keep order:false
+    │ └─IndexLookUp_67(Probe);1.54;root;;
+    │   ├─IndexRangeScan_64(Build);1.91;cop[tikv];table:an, index:person_id_aka_name(person_id);range: decided by [eq(test.aka_name.person_id, test.name.id)], keep order:false
+    │   └─Selection_66(Probe);1.54;cop[tikv];;or(like(test.aka_name.name, "%a%", 92), like(test.aka_name.name, "A%", 92))
+    │     └─TableRowIDScan_65;1.91;cop[tikv];table:an;keep order:false
+    └─IndexLookUp_52(Probe);5.40;root;;
+      ├─IndexRangeScan_49(Build);5.40;cop[tikv];table:pi, index:person_id_person_info(person_id);range: decided by [eq(test.person_info.person_id, test.name.id)], keep order:false
+      └─Selection_51(Probe);5.40;cop[tikv];;not(isnull(test.person_info.note))
+        └─TableRowIDScan_50;5.40;cop[tikv];table:pi;keep order:false

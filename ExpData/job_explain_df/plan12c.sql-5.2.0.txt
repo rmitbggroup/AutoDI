@@ -1,0 +1,34 @@
+StreamAgg_40;1.00;root;;funcs:min(test.company_name.name)->Column#41, funcs:min(test.movie_info_idx.info)->Column#42, funcs:min(test.title.title)->Column#43
+└─Projection_41;0.10;root;;test.company_name.name, test.movie_info_idx.info, test.title.title
+  └─IndexJoin_48;0.10;root;;inner join, inner:TableReader_44, outer key:test.movie_info.movie_id, test.movie_info_idx.movie_id, test.movie_companies.movie_id, inner key:test.title.id, test.title.id, test.title.id, equal cond:eq(test.movie_companies.movie_id, test.title.id), eq(test.movie_info.movie_id, test.title.id), eq(test.movie_info_idx.movie_id, test.title.id)
+    ├─IndexJoin_61(Build);0.10;root;;inner join, inner:TableReader_57, outer key:test.movie_companies.company_id, inner key:test.company_name.id, equal cond:eq(test.movie_companies.company_id, test.company_name.id)
+    │ ├─IndexJoin_142(Build);0.10;root;;inner join, inner:TableReader_138, outer key:test.movie_info.info_type_id, inner key:test.info_type.id, equal cond:eq(test.movie_info.info_type_id, test.info_type.id)
+    │ │ ├─IndexHashJoin_155(Build);0.85;root;;inner join, inner:IndexLookUp_152, outer key:test.movie_info_idx.movie_id, inner key:test.movie_info.movie_id, equal cond:eq(test.movie_companies.movie_id, test.movie_info.movie_id), eq(test.movie_info_idx.movie_id, test.movie_info.movie_id)
+    │ │ │ ├─HashJoin_176(Build);0.14;root;;inner join, equal:[eq(test.movie_info_idx.info_type_id, test.info_type.id)]
+    │ │ │ │ ├─TableReader_259(Build);0.11;root;;data:Selection_258
+    │ │ │ │ │ └─Selection_258;0.11;cop[tikv];;eq(test.info_type.info, "rating")
+    │ │ │ │ │   └─TableFullScan_257;113.00;cop[tikv];table:it2;keep order:false
+    │ │ │ │ └─HashJoin_194(Probe);3333.33;root;;inner join, equal:[eq(test.movie_companies.movie_id, test.movie_info_idx.movie_id)]
+    │ │ │ │   ├─TableReader_256(Build);3333.33;root;;data:Selection_255
+    │ │ │ │   │ └─Selection_255;3333.33;cop[tikv];;gt(test.movie_info_idx.info, "7.0")
+    │ │ │ │   │   └─TableFullScan_254;10000.00;cop[tikv];table:mi_idx;keep order:false, stats:pseudo
+    │ │ │ │   └─IndexHashJoin_222(Probe);5218.26;root;;inner join, inner:IndexLookUp_219, outer key:test.company_type.id, inner key:test.movie_companies.company_type_id, equal cond:eq(test.company_type.id, test.movie_companies.company_type_id)
+    │ │ │ │     ├─TableReader_251(Build);0.00;root;;data:Selection_250
+    │ │ │ │     │ └─Selection_250;0.00;cop[tikv];;eq(test.company_type.kind, "production companies")
+    │ │ │ │     │   └─TableFullScan_249;4.00;cop[tikv];table:ct;keep order:false
+    │ │ │ │     └─IndexLookUp_219(Probe);1304564.50;root;;
+    │ │ │ │       ├─IndexRangeScan_217(Build);1304564.50;cop[tikv];table:mc, index:company_type_id_movie_companies(company_type_id);range: decided by [eq(test.movie_companies.company_type_id, test.company_type.id)], keep order:false
+    │ │ │ │       └─TableRowIDScan_218(Probe);1304564.50;cop[tikv];table:mc;keep order:false
+    │ │ │ └─IndexLookUp_152(Probe);6.00;root;;
+    │ │ │   ├─IndexRangeScan_149(Build);1500.41;cop[tikv];table:mi, index:movie_id_movie_info(movie_id);range: decided by [eq(test.movie_info.movie_id, test.movie_info_idx.movie_id)], keep order:false
+    │ │ │   └─Selection_151(Probe);6.00;cop[tikv];;in(test.movie_info.info, "Drama", "Horror", "Western", "Family")
+    │ │ │     └─TableRowIDScan_150;1500.41;cop[tikv];table:mi;keep order:false
+    │ │ └─TableReader_138(Probe);0.00;root;;data:Selection_137
+    │ │   └─Selection_137;0.00;cop[tikv];;eq(test.info_type.info, "genres")
+    │ │     └─TableRangeScan_136;1.00;cop[tikv];table:it1;range: decided by [test.movie_info.info_type_id], keep order:false
+    │ └─TableReader_57(Probe);0.31;root;;data:Selection_56
+    │   └─Selection_56;0.31;cop[tikv];;eq(test.company_name.country_code, "[us]")
+    │     └─TableRangeScan_55;1.00;cop[tikv];table:cn;range: decided by [test.movie_companies.company_id], keep order:false
+    └─TableReader_44(Probe);0.41;root;;data:Selection_43
+      └─Selection_43;0.41;cop[tikv];;ge(test.title.production_year, 2000), le(test.title.production_year, 2010)
+        └─TableRangeScan_42;1.00;cop[tikv];table:t;range: decided by [test.movie_info.movie_id test.movie_info_idx.movie_id test.movie_companies.movie_id], keep order:false

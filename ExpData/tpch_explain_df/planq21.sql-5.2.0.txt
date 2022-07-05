@@ -1,0 +1,26 @@
+Projection_26;6.40;root;;test.supplier.s_name, Column#72
+└─TopN_29;6.40;root;;Column#72:desc, test.supplier.s_name, offset:0, count:100
+  └─HashAgg_34;6.40;root;;group by:test.supplier.s_name, funcs:count(1)->Column#72, funcs:firstrow(test.supplier.s_name)->test.supplier.s_name
+    └─IndexJoin_40;960.00;root;;anti semi join, inner:IndexLookUp_39, outer key:test.lineitem.l_orderkey, inner key:test.lineitem.l_orderkey, equal cond:eq(test.lineitem.l_orderkey, test.lineitem.l_orderkey), other cond:ne(test.lineitem.l_suppkey, test.lineitem.l_suppkey)
+      ├─IndexJoin_81(Build);1200.00;root;;semi join, inner:IndexLookUp_80, outer key:test.lineitem.l_orderkey, inner key:test.lineitem.l_orderkey, equal cond:eq(test.lineitem.l_orderkey, test.lineitem.l_orderkey), other cond:ne(test.lineitem.l_suppkey, test.lineitem.l_suppkey), ne(test.lineitem.l_suppkey, test.supplier.s_suppkey)
+      │ ├─IndexJoin_99(Build);1500.00;root;;inner join, inner:TableReader_95, outer key:test.lineitem.l_orderkey, inner key:test.orders.o_orderkey, equal cond:eq(test.lineitem.l_orderkey, test.orders.o_orderkey)
+      │ │ ├─HashJoin_107(Build);6001.22;root;;inner join, equal:[eq(test.supplier.s_suppkey, test.lineitem.l_suppkey)]
+      │ │ │ ├─HashJoin_120(Build);10.00;root;;inner join, equal:[eq(test.nation.n_nationkey, test.supplier.s_nationkey)]
+      │ │ │ │ ├─TableReader_125(Build);0.03;root;;data:Selection_124
+      │ │ │ │ │ └─Selection_124;0.03;cop[tikv];;eq(test.nation.n_name, "EGYPT")
+      │ │ │ │ │   └─TableFullScan_123;25.00;cop[tikv];table:nation;keep order:false
+      │ │ │ │ └─TableReader_122(Probe);10000.00;root;;data:TableFullScan_121
+      │ │ │ │   └─TableFullScan_121;10000.00;cop[tikv];table:supplier;keep order:false
+      │ │ │ └─TableReader_128(Probe);4800972.00;root;;data:Selection_127
+      │ │ │   └─Selection_127;4800972.00;cop[tikv];;gt(test.lineitem.l_receiptdate, test.lineitem.l_commitdate)
+      │ │ │     └─TableFullScan_126;6001215.00;cop[tikv];table:l1;keep order:false
+      │ │ └─TableReader_95(Probe);0.00;root;;data:Selection_94
+      │ │   └─Selection_94;0.00;cop[tikv];;eq(test.orders.o_orderstatus, "F")
+      │ │     └─TableRangeScan_93;1.00;cop[tikv];table:orders;range: decided by [test.lineitem.l_orderkey], keep order:false
+      │ └─IndexLookUp_80(Probe);4.03;root;;
+      │   ├─IndexRangeScan_78(Build);4.03;cop[tikv];table:l2, index:PRIMARY(L_ORDERKEY, L_LINENUMBER);range: decided by [eq(test.lineitem.l_orderkey, test.lineitem.l_orderkey)], keep order:false
+      │   └─TableRowIDScan_79(Probe);4.03;cop[tikv];table:l2;keep order:false
+      └─IndexLookUp_39(Probe);4.03;root;;
+        ├─IndexRangeScan_36(Build);5.04;cop[tikv];table:l3, index:PRIMARY(L_ORDERKEY, L_LINENUMBER);range: decided by [eq(test.lineitem.l_orderkey, test.lineitem.l_orderkey)], keep order:false
+        └─Selection_38(Probe);4.03;cop[tikv];;gt(test.lineitem.l_receiptdate, test.lineitem.l_commitdate)
+          └─TableRowIDScan_37;5.04;cop[tikv];table:l3;keep order:false

@@ -1,0 +1,17 @@
+Projection_14;10.00;root;;test.lineitem.l_orderkey, Column#35, test.orders.o_orderdate, test.orders.o_shippriority
+└─TopN_17;10.00;root;;Column#35:desc, test.orders.o_orderdate, offset:0, count:10
+  └─HashAgg_22;801359.39;root;;group by:Column#75, Column#76, Column#77, funcs:sum(Column#71)->Column#35, funcs:firstrow(Column#72)->test.orders.o_orderdate, funcs:firstrow(Column#73)->test.orders.o_shippriority, funcs:firstrow(Column#74)->test.lineitem.l_orderkey
+    └─Projection_58;1214587.97;root;;mul(test.lineitem.l_extendedprice, minus(1, test.lineitem.l_discount))->Column#71, test.orders.o_orderdate, test.orders.o_shippriority, test.lineitem.l_orderkey, test.lineitem.l_orderkey, test.orders.o_orderdate, test.orders.o_shippriority
+      └─MergeJoin_23;1214587.97;root;;inner join, left key:test.orders.o_orderkey, right key:test.lineitem.l_orderkey
+        ├─Projection_57(Build);3232776.46;root;;test.lineitem.l_orderkey, test.lineitem.l_extendedprice, test.lineitem.l_discount, test.lineitem.l_shipdate
+        │ └─IndexLookUp_56;3232776.46;root;;
+        │   ├─IndexFullScan_53(Build);6001215.00;cop[tikv];table:lineitem, index:PRIMARY(L_ORDERKEY, L_LINENUMBER);keep order:true
+        │   └─Selection_55(Probe);3232776.46;cop[tikv];;gt(test.lineitem.l_shipdate, 1995-03-13 00:00:00.000000)
+        │     └─TableRowIDScan_54;6001215.00;cop[tikv];table:lineitem;keep order:false
+        └─IndexHashJoin_48(Probe);301079.11;root;;inner join, inner:TableReader_42, outer key:test.orders.o_custkey, inner key:test.customer.c_custkey, equal cond:eq(test.orders.o_custkey, test.customer.c_custkey)
+          ├─TableReader_52(Build);729898.33;root;;data:Selection_51
+          │ └─Selection_51;729898.33;cop[tikv];;lt(test.orders.o_orderdate, 1995-03-13 00:00:00.000000)
+          │   └─TableFullScan_50;1500000.00;cop[tikv];table:orders;keep order:true
+          └─TableReader_42(Probe);0.13;root;;data:Selection_41
+            └─Selection_41;0.13;cop[tikv];;eq(test.customer.c_mktsegment, "AUTOMOBILE")
+              └─TableRangeScan_40;1.00;cop[tikv];table:customer;range: decided by [test.orders.o_custkey], keep order:false

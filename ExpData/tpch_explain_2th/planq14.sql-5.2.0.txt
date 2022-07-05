@@ -1,0 +1,9 @@
+Projection_8;1.00;root;;div(mul(100.00, Column#27), Column#28)->Column#29
+└─HashAgg_9;1.00;root;;funcs:sum(Column#31)->Column#27, funcs:sum(Column#32)->Column#28
+  └─Projection_25;80323.70;root;;case(like(test.part.p_type, PROMO%, 92), mul(test.lineitem.l_extendedprice, minus(1, test.lineitem.l_discount)), 0)->Column#31, mul(test.lineitem.l_extendedprice, minus(1, test.lineitem.l_discount))->Column#32
+    └─IndexHashJoin_17;80323.70;root;;inner join, inner:TableReader_12, outer key:test.lineitem.l_partkey, inner key:test.part.p_partkey, equal cond:eq(test.lineitem.l_partkey, test.part.p_partkey)
+      ├─TableReader_24(Build);79102.78;root;;data:Selection_23
+      │ └─Selection_23;79102.78;cop[tikv];;ge(test.lineitem.l_shipdate, 1996-12-01 00:00:00.000000), lt(test.lineitem.l_shipdate, 1997-01-01)
+      │   └─TableFullScan_22;6001215.00;cop[tikv];table:lineitem;keep order:false
+      └─TableReader_12(Probe);1.00;root;;data:TableRangeScan_11
+        └─TableRangeScan_11;1.00;cop[tikv];table:part;range: decided by [test.lineitem.l_partkey], keep order:false

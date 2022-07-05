@@ -1,0 +1,35 @@
+HashAgg_41;1.00;root;;funcs:min(test.company_name.name)->Column#39, funcs:min(test.link_type.link)->Column#40, funcs:min(test.title.title)->Column#41
+└─Projection_43;0.00;root;;test.company_name.name, test.link_type.link, test.title.title
+  └─IndexJoin_51;0.00;root;;inner join, inner:TableReader_47, outer key:test.movie_keyword.keyword_id, inner key:test.keyword.id, equal cond:eq(test.movie_keyword.keyword_id, test.keyword.id)
+    ├─IndexJoin_61(Build);0.00;root;;inner join, inner:IndexLookUp_60, outer key:test.title.id, inner key:test.movie_keyword.movie_id, equal cond:eq(test.movie_companies.movie_id, test.movie_keyword.movie_id), eq(test.movie_link.movie_id, test.movie_keyword.movie_id), eq(test.title.id, test.movie_keyword.movie_id)
+    │ ├─IndexJoin_77(Build);0.00;root;;inner join, inner:TableReader_73, outer key:test.movie_link.movie_id, test.movie_companies.movie_id, inner key:test.title.id, test.title.id, equal cond:eq(test.movie_companies.movie_id, test.title.id), eq(test.movie_link.movie_id, test.title.id)
+    │ │ ├─IndexJoin_90(Build);0.00;root;;inner join, inner:TableReader_86, outer key:test.movie_companies.company_id, inner key:test.company_name.id, equal cond:eq(test.movie_companies.company_id, test.company_name.id)
+    │ │ │ ├─IndexJoin_146(Build);0.00;root;;inner join, inner:TableReader_142, outer key:test.movie_link.link_type_id, inner key:test.link_type.id, equal cond:eq(test.movie_link.link_type_id, test.link_type.id)
+    │ │ │ │ ├─IndexJoin_158(Build);0.00;root;;inner join, inner:IndexLookUp_157, outer key:test.movie_companies.movie_id, inner key:test.movie_link.movie_id, equal cond:eq(test.movie_companies.movie_id, test.movie_link.movie_id)
+    │ │ │ │ │ ├─MergeJoin_189(Build);0.00;root;;inner join, left key:test.movie_companies.company_type_id, right key:test.company_type.id
+    │ │ │ │ │ │ ├─TableReader_224(Build);1.00;root;;data:Selection_223
+    │ │ │ │ │ │ │ └─Selection_223;1.00;cop[tikv];;eq(test.company_type.kind, "production companies")
+    │ │ │ │ │ │ │   └─TableFullScan_222;4.00;cop[tikv];table:ct;keep order:true
+    │ │ │ │ │ │ └─Projection_221(Probe);0.00;root;;test.movie_companies.movie_id, test.movie_companies.company_id, test.movie_companies.company_type_id, test.movie_companies.note
+    │ │ │ │ │ │   └─IndexLookUp_220;0.00;root;;
+    │ │ │ │ │ │     ├─IndexFullScan_217(Build);2609129.00;cop[tikv];table:mc, index:company_type_id_movie_companies(company_type_id);keep order:true
+    │ │ │ │ │ │     └─Selection_219(Probe);0.00;cop[tikv];;isnull(test.movie_companies.note)
+    │ │ │ │ │ │       └─TableRowIDScan_218;2609129.00;cop[tikv];table:mc;keep order:false
+    │ │ │ │ │ └─IndexLookUp_157(Probe);0.00;root;;
+    │ │ │ │ │   ├─IndexRangeScan_155(Build);0.00;cop[tikv];table:ml, index:movie_id_movie_link(movie_id);range: decided by [eq(test.movie_link.movie_id, test.movie_companies.movie_id)], keep order:false
+    │ │ │ │ │   └─TableRowIDScan_156(Probe);0.00;cop[tikv];table:ml;keep order:false
+    │ │ │ │ └─TableReader_142(Probe);0.80;root;;data:Selection_141
+    │ │ │ │   └─Selection_141;0.80;cop[tikv];;like(test.link_type.link, "%follow%", 92)
+    │ │ │ │     └─TableRangeScan_140;1.00;cop[tikv];table:lt;range: decided by [test.movie_link.link_type_id], keep order:false
+    │ │ │ └─TableReader_86(Probe);0.96;root;;data:Selection_85
+    │ │ │   └─Selection_85;0.96;cop[tikv];;ne(test.company_name.country_code, "[pl]"), or(like(test.company_name.name, "%Film%", 92), like(test.company_name.name, "%Warner%", 92))
+    │ │ │     └─TableRangeScan_84;1.00;cop[tikv];table:cn;range: decided by [test.movie_companies.company_id], keep order:false
+    │ │ └─TableReader_73(Probe);0.36;root;;data:Selection_72
+    │ │   └─Selection_72;0.36;cop[tikv];;ge(test.title.production_year, 1950), le(test.title.production_year, 2000)
+    │ │     └─TableRangeScan_71;1.00;cop[tikv];table:t;range: decided by [test.movie_link.movie_id test.movie_companies.movie_id], keep order:false
+    │ └─IndexLookUp_60(Probe);0.00;root;;
+    │   ├─IndexRangeScan_58(Build);0.00;cop[tikv];table:mk, index:movie_id_movie_keyword(movie_id);range: decided by [eq(test.movie_keyword.movie_id, test.title.id)], keep order:false
+    │   └─TableRowIDScan_59(Probe);0.00;cop[tikv];table:mk;keep order:false
+    └─TableReader_47(Probe);0.00;root;;data:Selection_46
+      └─Selection_46;0.00;cop[tikv];;eq(test.keyword.keyword, "sequel")
+        └─TableRangeScan_45;1.00;cop[tikv];table:k;range: decided by [test.movie_keyword.keyword_id], keep order:false

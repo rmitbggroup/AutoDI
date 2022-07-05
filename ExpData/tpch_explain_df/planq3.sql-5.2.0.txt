@@ -1,0 +1,16 @@
+Projection_14;10.00;root;;test.lineitem.l_orderkey, Column#35, test.orders.o_orderdate, test.orders.o_shippriority
+└─TopN_17;10.00;root;;Column#35:desc, test.orders.o_orderdate, offset:0, count:10
+  └─HashAgg_22;9145.53;root;;group by:Column#48, Column#49, Column#50, funcs:sum(Column#44)->Column#35, funcs:firstrow(Column#45)->test.orders.o_orderdate, funcs:firstrow(Column#46)->test.orders.o_shippriority, funcs:firstrow(Column#47)->test.lineitem.l_orderkey
+    └─Projection_82;9145.53;root;;mul(test.lineitem.l_extendedprice, minus(1, test.lineitem.l_discount))->Column#44, test.orders.o_orderdate, test.orders.o_shippriority, test.lineitem.l_orderkey, test.lineitem.l_orderkey, test.orders.o_orderdate, test.orders.o_shippriority
+      └─IndexHashJoin_30;9145.53;root;;inner join, inner:IndexLookUp_27, outer key:test.orders.o_orderkey, inner key:test.lineitem.l_orderkey, equal cond:eq(test.orders.o_orderkey, test.lineitem.l_orderkey)
+        ├─HashJoin_70(Build);2267.05;root;;inner join, equal:[eq(test.customer.c_custkey, test.orders.o_custkey)]
+        │ ├─TableReader_76(Build);150.00;root;;data:Selection_75
+        │ │ └─Selection_75;150.00;cop[tikv];;eq(test.customer.c_mktsegment, "AUTOMOBILE")
+        │ │   └─TableFullScan_74;150000.00;cop[tikv];table:customer;keep order:false
+        │ └─TableReader_73(Probe);498500.00;root;;data:Selection_72
+        │   └─Selection_72;498500.00;cop[tikv];;lt(test.orders.o_orderdate, 1995-03-13 00:00:00.000000)
+        │     └─TableFullScan_71;1500000.00;cop[tikv];table:orders;keep order:false
+        └─IndexLookUp_27(Probe);4.03;root;;
+          ├─IndexRangeScan_24(Build);12.10;cop[tikv];table:lineitem, index:PRIMARY(L_ORDERKEY, L_LINENUMBER);range: decided by [eq(test.lineitem.l_orderkey, test.orders.o_orderkey)], keep order:false
+          └─Selection_26(Probe);4.03;cop[tikv];;gt(test.lineitem.l_shipdate, 1995-03-13 00:00:00.000000)
+            └─TableRowIDScan_25;12.10;cop[tikv];table:lineitem;keep order:false

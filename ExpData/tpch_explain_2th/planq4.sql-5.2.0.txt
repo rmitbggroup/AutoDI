@@ -1,0 +1,11 @@
+Sort_10;1.00;root;;test.orders.o_orderpriority
+└─Projection_12;1.00;root;;test.orders.o_orderpriority, Column#27
+  └─HashAgg_13;1.00;root;;group by:test.orders.o_orderpriority, funcs:count(1)->Column#27, funcs:firstrow(test.orders.o_orderpriority)->test.orders.o_orderpriority
+    └─IndexJoin_19;46178.00;root;;semi join, inner:IndexLookUp_18, outer key:test.orders.o_orderkey, inner key:test.lineitem.l_orderkey, equal cond:eq(test.orders.o_orderkey, test.lineitem.l_orderkey)
+      ├─TableReader_40(Build);57722.50;root;;data:Selection_39
+      │ └─Selection_39;57722.50;cop[tikv];;ge(test.orders.o_orderdate, 1995-01-01 00:00:00.000000), lt(test.orders.o_orderdate, 1995-04-01)
+      │   └─TableFullScan_38;1500000.00;cop[tikv];table:orders;keep order:false
+      └─IndexLookUp_18(Probe);4.03;root;;
+        ├─IndexRangeScan_15(Build);5.04;cop[tikv];table:lineitem, index:PRIMARY(L_ORDERKEY, L_LINENUMBER);range: decided by [eq(test.lineitem.l_orderkey, test.orders.o_orderkey)], keep order:false
+        └─Selection_17(Probe);4.03;cop[tikv];;lt(test.lineitem.l_commitdate, test.lineitem.l_receiptdate)
+          └─TableRowIDScan_16;5.04;cop[tikv];table:lineitem;keep order:false

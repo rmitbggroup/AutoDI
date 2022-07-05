@@ -1,0 +1,35 @@
+StreamAgg_35;1.00;root;;funcs:min(test.movie_info_idx.info)->Column#35, funcs:min(test.title.title)->Column#36
+└─Projection_36;0.87;root;;test.movie_info_idx.info, test.title.title
+  └─IndexJoin_44;0.87;root;;inner join, inner:TableReader_40, outer key:test.movie_keyword.keyword_id, inner key:test.keyword.id, equal cond:eq(test.movie_keyword.keyword_id, test.keyword.id)
+    ├─IndexHashJoin_56(Build);0.87;root;;inner join, inner:IndexLookUp_53, outer key:test.title.id, inner key:test.movie_keyword.movie_id, equal cond:eq(test.movie_info.movie_id, test.movie_keyword.movie_id), eq(test.movie_info_idx.movie_id, test.movie_keyword.movie_id), eq(test.title.id, test.movie_keyword.movie_id)
+    │ ├─IndexJoin_71(Build);0.09;root;;inner join, inner:TableReader_67, outer key:test.movie_info.info_type_id, inner key:test.info_type.id, equal cond:eq(test.movie_info.info_type_id, test.info_type.id)
+    │ │ ├─IndexHashJoin_84(Build);0.81;root;;inner join, inner:IndexLookUp_81, outer key:test.title.id, inner key:test.movie_info.movie_id, equal cond:eq(test.movie_info_idx.movie_id, test.movie_info.movie_id), eq(test.title.id, test.movie_info.movie_id)
+    │ │ │ ├─HashJoin_105(Build);0.13;root;;inner join, equal:[eq(test.movie_info_idx.info_type_id, test.info_type.id)]
+    │ │ │ │ ├─TableReader_189(Build);0.11;root;;data:Selection_188
+    │ │ │ │ │ └─Selection_188;0.11;cop[tikv];;eq(test.info_type.info, "rating")
+    │ │ │ │ │   └─TableFullScan_187;113.00;cop[tikv];table:it2;keep order:false
+    │ │ │ │ └─HashJoin_124(Probe);3160.39;root;;inner join, equal:[eq(test.title.id, test.movie_info_idx.movie_id)]
+    │ │ │ │   ├─IndexHashJoin_151(Build);2528.31;root;;inner join, inner:IndexLookUp_148, outer key:test.kind_type.id, inner key:test.title.kind_id, equal cond:eq(test.kind_type.id, test.title.kind_id)
+    │ │ │ │   │ ├─TableReader_180(Build);0.01;root;;data:Selection_179
+    │ │ │ │   │ │ └─Selection_179;0.01;cop[tikv];;eq(test.kind_type.kind, "movie")
+    │ │ │ │   │ │   └─TableFullScan_178;7.00;cop[tikv];table:kt;keep order:false
+    │ │ │ │   │ └─IndexLookUp_148(Probe);361187.43;root;;
+    │ │ │ │   │   ├─IndexRangeScan_145(Build);2325974.65;cop[tikv];table:t, index:kind_id_title(kind_id);range: decided by [eq(test.title.kind_id, test.kind_type.id)], keep order:false
+    │ │ │ │   │   └─Selection_147(Probe);361187.43;cop[tikv];;gt(test.title.production_year, 2010)
+    │ │ │ │   │     └─TableRowIDScan_146;2325974.65;cop[tikv];table:t;keep order:false
+    │ │ │ │   └─TableReader_186(Probe);3323.33;root;;data:Selection_185
+    │ │ │ │     └─Selection_185;3323.33;cop[tikv];;lt(test.movie_info_idx.info, "8.5")
+    │ │ │ │       └─TableFullScan_184;10000.00;cop[tikv];table:mi_idx;keep order:false, stats:pseudo
+    │ │ │ └─IndexLookUp_81(Probe);6.00;root;;
+    │ │ │   ├─IndexRangeScan_78(Build);600.17;cop[tikv];table:mi, index:movie_id_movie_info(movie_id);range: decided by [eq(test.movie_info.movie_id, test.title.id)], keep order:false
+    │ │ │   └─Selection_80(Probe);6.00;cop[tikv];;in(test.movie_info.info, "Sweden", "Norway", "Germany", "Denmark", "Swedish", "Denish", "Norwegian", "German", "USA", "American")
+    │ │ │     └─TableRowIDScan_79;600.17;cop[tikv];table:mi;keep order:false
+    │ │ └─TableReader_67(Probe);0.00;root;;data:Selection_66
+    │ │   └─Selection_66;0.00;cop[tikv];;eq(test.info_type.info, "countries")
+    │ │     └─TableRangeScan_65;1.00;cop[tikv];table:it1;range: decided by [test.movie_info.info_type_id], keep order:false
+    │ └─IndexLookUp_53(Probe);9.53;root;;
+    │   ├─IndexRangeScan_51(Build);9.53;cop[tikv];table:mk, index:movie_id_movie_keyword(movie_id);range: decided by [eq(test.movie_keyword.movie_id, test.title.id)], keep order:false
+    │   └─TableRowIDScan_52(Probe);9.53;cop[tikv];table:mk;keep order:false
+    └─TableReader_40(Probe);0.00;root;;data:Selection_39
+      └─Selection_39;0.00;cop[tikv];;in(test.keyword.keyword, "murder", "murder-in-title", "blood", "violence")
+        └─TableRangeScan_38;1.00;cop[tikv];table:k;range: decided by [test.movie_keyword.keyword_id], keep order:false

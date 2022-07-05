@@ -1,0 +1,41 @@
+HashAgg_47;1.00;root;;funcs:min(test.name.name)->Column#65, funcs:min(test.title.title)->Column#66
+└─Projection_49;764863.90;root;;test.name.name, test.title.title
+  └─IndexJoin_57;764863.90;root;;inner join, inner:TableReader_53, outer key:test.movie_companies.company_id, inner key:test.company_name.id, equal cond:eq(test.movie_companies.company_id, test.company_name.id)
+    ├─IndexJoin_68(Build);2364443.75;root;;inner join, inner:IndexLookUp_67, outer key:test.title.id, inner key:test.movie_companies.movie_id, equal cond:eq(test.cast_info.movie_id, test.movie_companies.movie_id), eq(test.movie_info.movie_id, test.movie_companies.movie_id), eq(test.title.id, test.movie_companies.movie_id)
+    │ ├─IndexJoin_84(Build);988634.80;root;;inner join, inner:TableReader_81, outer key:test.cast_info.person_role_id, inner key:test.char_name.id, equal cond:eq(test.cast_info.person_role_id, test.char_name.id)
+    │ │ ├─IndexJoin_123(Build);982110.83;root;;inner join, inner:IndexReader_122, outer key:test.name.id, inner key:test.aka_name.person_id, equal cond:eq(test.cast_info.person_id, test.aka_name.person_id), eq(test.name.id, test.aka_name.person_id)
+    │ │ │ ├─IndexJoin_138(Build);826914.96;root;;inner join, inner:TableReader_134, outer key:test.cast_info.person_id, inner key:test.name.id, equal cond:eq(test.cast_info.person_id, test.name.id)
+    │ │ │ │ ├─IndexJoin_163(Build);820654.00;root;;inner join, inner:TableReader_159, outer key:test.cast_info.role_id, inner key:test.role_type.id, equal cond:eq(test.cast_info.role_id, test.role_type.id)
+    │ │ │ │ │ ├─IndexJoin_174(Build);820654.00;root;;inner join, inner:IndexLookUp_173, outer key:test.title.id, inner key:test.cast_info.movie_id, equal cond:eq(test.movie_info.movie_id, test.cast_info.movie_id), eq(test.title.id, test.cast_info.movie_id)
+    │ │ │ │ │ │ ├─IndexJoin_192(Build);209043.10;root;;inner join, inner:TableReader_188, outer key:test.movie_info.movie_id, inner key:test.title.id, equal cond:eq(test.movie_info.movie_id, test.title.id)
+    │ │ │ │ │ │ │ ├─IndexHashJoin_241(Build);208953.80;root;;inner join, inner:TableReader_235, outer key:test.movie_info.info_type_id, inner key:test.info_type.id, equal cond:eq(test.movie_info.info_type_id, test.info_type.id)
+    │ │ │ │ │ │ │ │ ├─TableReader_259(Build);1399720.02;root;;data:Selection_258
+    │ │ │ │ │ │ │ │ │ └─Selection_258;1399720.02;cop[tikv];;or(like(test.movie_info.info, "Japan:%200%", 92), like(test.movie_info.info, "USA:%200%", 92))
+    │ │ │ │ │ │ │ │ │   └─TableFullScan_257;14835720.00;cop[tikv];table:mi;keep order:false
+    │ │ │ │ │ │ │ │ └─TableReader_235(Probe);0.01;root;;data:Selection_234
+    │ │ │ │ │ │ │ │   └─Selection_234;0.01;cop[tikv];;eq(test.info_type.info, "release dates")
+    │ │ │ │ │ │ │ │     └─TableRangeScan_233;1.00;cop[tikv];table:it;range: decided by [test.movie_info.info_type_id], keep order:false
+    │ │ │ │ │ │ │ └─TableReader_188(Probe);0.23;root;;data:Selection_187
+    │ │ │ │ │ │ │   └─Selection_187;0.23;cop[tikv];;ge(test.title.production_year, 2005), le(test.title.production_year, 2009)
+    │ │ │ │ │ │ │     └─TableRangeScan_186;1.00;cop[tikv];table:t;range: decided by [test.movie_info.movie_id], keep order:false
+    │ │ │ │ │ │ └─IndexLookUp_173(Probe);3.93;root;;
+    │ │ │ │ │ │   ├─IndexRangeScan_170(Build);173.38;cop[tikv];table:ci, index:movie_id_cast_info(movie_id);range: decided by [eq(test.cast_info.movie_id, test.title.id)], keep order:false
+    │ │ │ │ │ │   └─Selection_172(Probe);3.93;cop[tikv];;in(test.cast_info.note, "(voice)", "(voice: Japanese version)", "(voice) (uncredited)", "(voice: English version)"), not(isnull(test.cast_info.person_role_id))
+    │ │ │ │ │ │     └─TableRowIDScan_171;173.38;cop[tikv];table:ci;keep order:false
+    │ │ │ │ │ └─TableReader_159(Probe);0.08;root;;data:Selection_158
+    │ │ │ │ │   └─Selection_158;0.08;cop[tikv];;eq(test.role_type.role, "actress")
+    │ │ │ │ │     └─TableRangeScan_157;1.00;cop[tikv];table:rt;range: decided by [test.cast_info.role_id], keep order:false
+    │ │ │ │ └─TableReader_134(Probe);0.18;root;;data:Selection_133
+    │ │ │ │   └─Selection_133;0.18;cop[tikv];;eq(test.name.gender, "f"), like(test.name.name, "%Ang%", 92)
+    │ │ │ │     └─TableRangeScan_132;1.00;cop[tikv];table:n;range: decided by [test.cast_info.person_id], keep order:false
+    │ │ │ └─IndexReader_122(Probe);1.19;root;;index:IndexRangeScan_121
+    │ │ │   └─IndexRangeScan_121;1.19;cop[tikv];table:an, index:person_id_aka_name(person_id);range: decided by [eq(test.aka_name.person_id, test.name.id)], keep order:false
+    │ │ └─TableReader_81(Probe);1.00;root;;data:TableRangeScan_80
+    │ │   └─TableRangeScan_80;1.00;cop[tikv];table:chn;range: decided by [test.cast_info.person_role_id], keep order:false
+    │ └─IndexLookUp_67(Probe);2.39;root;;
+    │   ├─IndexRangeScan_64(Build);2.49;cop[tikv];table:mc, index:movie_id_movie_companies(movie_id);range: decided by [eq(test.movie_companies.movie_id, test.title.id)], keep order:false
+    │   └─Selection_66(Probe);2.39;cop[tikv];;not(isnull(test.movie_companies.note)), or(like(test.movie_companies.note, "%(USA)%", 92), like(test.movie_companies.note, "%(worldwide)%", 92))
+    │     └─TableRowIDScan_65;2.49;cop[tikv];table:mc;keep order:false
+    └─TableReader_53(Probe);0.31;root;;data:Selection_52
+      └─Selection_52;0.31;cop[tikv];;eq(test.company_name.country_code, "[us]")
+        └─TableRangeScan_51;1.00;cop[tikv];table:cn;range: decided by [test.movie_companies.company_id], keep order:false

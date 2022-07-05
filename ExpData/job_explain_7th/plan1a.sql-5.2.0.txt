@@ -1,0 +1,19 @@
+HashAgg_21;1.00;root;;funcs:min(test.movie_companies.note)->Column#27, funcs:min(test.title.title)->Column#28, funcs:min(test.title.production_year)->Column#29
+└─IndexJoin_28;1.95;root;;inner join, inner:TableReader_25, outer key:test.movie_companies.movie_id, test.movie_info_idx.movie_id, inner key:test.title.id, test.title.id, equal cond:eq(test.movie_companies.movie_id, test.title.id), eq(test.movie_info_idx.movie_id, test.title.id)
+  ├─IndexJoin_41(Build);1.95;root;;inner join, inner:TableReader_37, outer key:test.movie_info_idx.info_type_id, inner key:test.info_type.id, equal cond:eq(test.movie_info_idx.info_type_id, test.info_type.id)
+  │ ├─IndexJoin_53(Build);15570.48;root;;inner join, inner:IndexLookUp_52, outer key:test.movie_companies.movie_id, inner key:test.movie_info_idx.movie_id, equal cond:eq(test.movie_companies.movie_id, test.movie_info_idx.movie_id)
+  │ │ ├─IndexHashJoin_107(Build);1304564.50;root;;inner join, inner:TableReader_101, outer key:test.movie_companies.company_type_id, inner key:test.company_type.id, equal cond:eq(test.movie_companies.company_type_id, test.company_type.id)
+  │ │ │ ├─TableReader_125(Build);2003811.07;root;;data:Selection_124
+  │ │ │ │ └─Selection_124;2003811.07;cop[tikv];;not(like(test.movie_companies.note, "%(as Metro-Goldwyn-Mayer Pictures)%", 92)), or(like(test.movie_companies.note, "%(co-production)%", 92), like(test.movie_companies.note, "%(presents)%", 92))
+  │ │ │ │   └─TableFullScan_123;2609129.00;cop[tikv];table:mc;keep order:false
+  │ │ │ └─TableReader_101(Probe);0.25;root;;data:Selection_100
+  │ │ │   └─Selection_100;0.25;cop[tikv];;eq(test.company_type.kind, "production companies")
+  │ │ │     └─TableRangeScan_99;1.00;cop[tikv];table:ct;range: decided by [test.movie_companies.company_type_id], keep order:false
+  │ │ └─IndexLookUp_52(Probe);0.01;root;;
+  │ │   ├─IndexRangeScan_50(Build);0.01;cop[tikv];table:mi_idx, index:movie_id_movie_info_idx(movie_id);range: decided by [eq(test.movie_info_idx.movie_id, test.movie_companies.movie_id)], keep order:false, stats:pseudo
+  │ │   └─TableRowIDScan_51(Probe);0.01;cop[tikv];table:mi_idx;keep order:false, stats:pseudo
+  │ └─TableReader_37(Probe);0.00;root;;data:Selection_36
+  │   └─Selection_36;0.00;cop[tikv];;eq(test.info_type.info, "top 250 rank")
+  │     └─TableRangeScan_35;0.01;cop[tikv];table:it;range: decided by [test.movie_info_idx.info_type_id], keep order:false
+  └─TableReader_25(Probe);1.00;root;;data:TableRangeScan_24
+    └─TableRangeScan_24;1.00;cop[tikv];table:t;range: decided by [test.movie_companies.movie_id test.movie_info_idx.movie_id], keep order:false

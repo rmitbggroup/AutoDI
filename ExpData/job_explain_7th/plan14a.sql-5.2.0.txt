@@ -1,0 +1,33 @@
+HashAgg_34;1.00;root;;funcs:min(test.movie_info_idx.info)->Column#35, funcs:min(test.title.title)->Column#36
+└─IndexJoin_44;4.04;root;;inner join, inner:TableReader_40, outer key:test.movie_keyword.keyword_id, inner key:test.keyword.id, equal cond:eq(test.movie_keyword.keyword_id, test.keyword.id)
+  ├─IndexJoin_54(Build);19.81;root;;inner join, inner:IndexLookUp_53, outer key:test.title.id, inner key:test.movie_keyword.movie_id, equal cond:eq(test.movie_info.movie_id, test.movie_keyword.movie_id), eq(test.movie_info_idx.movie_id, test.movie_keyword.movie_id), eq(test.title.id, test.movie_keyword.movie_id)
+  │ ├─IndexJoin_71(Build);2.08;root;;inner join, inner:TableReader_67, outer key:test.title.kind_id, inner key:test.kind_type.id, equal cond:eq(test.title.kind_id, test.kind_type.id)
+  │ │ ├─IndexJoin_84(Build);2.26;root;;inner join, inner:TableReader_80, outer key:test.movie_info.movie_id, test.movie_info_idx.movie_id, inner key:test.title.id, test.title.id, equal cond:eq(test.movie_info.movie_id, test.title.id), eq(test.movie_info_idx.movie_id, test.title.id)
+  │ │ │ ├─IndexJoin_97(Build);2.26;root;;inner join, inner:TableReader_93, outer key:test.movie_info_idx.info_type_id, inner key:test.info_type.id, equal cond:eq(test.movie_info_idx.info_type_id, test.info_type.id)
+  │ │ │ │ ├─IndexJoin_110(Build);6002.96;root;;inner join, inner:IndexLookUp_109, outer key:test.movie_info.movie_id, inner key:test.movie_info_idx.movie_id, equal cond:eq(test.movie_info.movie_id, test.movie_info_idx.movie_id)
+  │ │ │ │ │ ├─IndexHashJoin_166(Build);208953.80;root;;inner join, inner:TableReader_160, outer key:test.movie_info.info_type_id, inner key:test.info_type.id, equal cond:eq(test.movie_info.info_type_id, test.info_type.id)
+  │ │ │ │ │ │ ├─TableReader_184(Build);694272.66;root;;data:Selection_183
+  │ │ │ │ │ │ │ └─Selection_183;694272.66;cop[tikv];;in(test.movie_info.info, "Sweden", "Norway", "Germany", "Denmark", "Swedish", "Denish", "Norwegian", "German", "USA", "American")
+  │ │ │ │ │ │ │   └─TableFullScan_182;14835720.00;cop[tikv];table:mi;keep order:false
+  │ │ │ │ │ │ └─TableReader_160(Probe);0.01;root;;data:Selection_159
+  │ │ │ │ │ │   └─Selection_159;0.01;cop[tikv];;eq(test.info_type.info, "countries")
+  │ │ │ │ │ │     └─TableRangeScan_158;1.00;cop[tikv];table:it1;range: decided by [test.movie_info.info_type_id], keep order:false
+  │ │ │ │ │ └─IndexLookUp_109(Probe);0.03;root;;
+  │ │ │ │ │   ├─IndexRangeScan_106(Build);0.09;cop[tikv];table:mi_idx, index:movie_id_movie_info_idx(movie_id);range: decided by [eq(test.movie_info_idx.movie_id, test.movie_info.movie_id)], keep order:false, stats:pseudo
+  │ │ │ │ │   └─Selection_108(Probe);0.03;cop[tikv];;lt(test.movie_info_idx.info, "8.5")
+  │ │ │ │ │     └─TableRowIDScan_107;0.09;cop[tikv];table:mi_idx;keep order:false, stats:pseudo
+  │ │ │ │ └─TableReader_93(Probe);0.00;root;;data:Selection_92
+  │ │ │ │   └─Selection_92;0.00;cop[tikv];;eq(test.info_type.info, "rating")
+  │ │ │ │     └─TableRangeScan_91;0.04;cop[tikv];table:it2;range: decided by [test.movie_info_idx.info_type_id], keep order:false
+  │ │ │ └─TableReader_80(Probe);0.16;root;;data:Selection_79
+  │ │ │   └─Selection_79;0.16;cop[tikv];;gt(test.title.production_year, 2010)
+  │ │ │     └─TableRangeScan_78;1.00;cop[tikv];table:t;range: decided by [test.movie_info.movie_id test.movie_info_idx.movie_id], keep order:false
+  │ │ └─TableReader_67(Probe);0.14;root;;data:Selection_66
+  │ │   └─Selection_66;0.14;cop[tikv];;eq(test.kind_type.kind, "movie")
+  │ │     └─TableRangeScan_65;1.00;cop[tikv];table:kt;range: decided by [test.title.kind_id], keep order:false
+  │ └─IndexLookUp_53(Probe);9.53;root;;
+  │   ├─IndexRangeScan_51(Build);9.53;cop[tikv];table:mk, index:movie_id_movie_keyword(movie_id);range: decided by [eq(test.movie_keyword.movie_id, test.title.id)], keep order:false
+  │   └─TableRowIDScan_52(Probe);9.53;cop[tikv];table:mk;keep order:false
+  └─TableReader_40(Probe);0.00;root;;data:Selection_39
+    └─Selection_39;0.00;cop[tikv];;in(test.keyword.keyword, "murder", "murder-in-title", "blood", "violence")
+      └─TableRangeScan_38;1.00;cop[tikv];table:k;range: decided by [test.movie_keyword.keyword_id], keep order:false

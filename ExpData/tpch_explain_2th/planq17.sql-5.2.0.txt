@@ -1,0 +1,12 @@
+Projection_17;1.00;root;;div(Column#46, 7.0)->Column#47
+└─HashAgg_18;1.00;root;;funcs:sum(test.lineitem.l_extendedprice)->Column#46
+  └─HashJoin_21;6026.04;root;;inner join, equal:[eq(test.part.p_partkey, test.lineitem.l_partkey)], other cond:lt(test.lineitem.l_quantity, mul(0.2, Column#44))
+    ├─HashAgg_40(Build);196960.00;root;;group by:test.lineitem.l_partkey, funcs:avg(test.lineitem.l_quantity)->Column#44, funcs:firstrow(test.lineitem.l_partkey)->test.lineitem.l_partkey
+    │ └─TableReader_45;6001215.00;root;;data:TableFullScan_44
+    │   └─TableFullScan_44;6001215.00;cop[tikv];table:lineitem;keep order:false
+    └─IndexJoin_29(Probe);6026.04;root;;inner join, inner:TableReader_25, outer key:test.lineitem.l_partkey, inner key:test.part.p_partkey, equal cond:eq(test.lineitem.l_partkey, test.part.p_partkey)
+      ├─TableReader_37(Build);6001215.00;root;;data:TableFullScan_36
+      │ └─TableFullScan_36;6001215.00;cop[tikv];table:lineitem;keep order:false
+      └─TableReader_25(Probe);0.00;root;;data:Selection_24
+        └─Selection_24;0.00;cop[tikv];;eq(test.part.p_brand, "Brand#44"), eq(test.part.p_container, "WRAP PKG")
+          └─TableRangeScan_23;1.00;cop[tikv];table:part;range: decided by [test.lineitem.l_partkey], keep order:false

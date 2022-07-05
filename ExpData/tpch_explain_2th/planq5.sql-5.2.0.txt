@@ -1,0 +1,24 @@
+Sort_24;5.00;root;;Column#49:desc
+└─Projection_26;5.00;root;;test.nation.n_name, Column#49
+  └─HashAgg_27;5.00;root;;group by:Column#52, funcs:sum(Column#50)->Column#49, funcs:firstrow(Column#51)->test.nation.n_name
+    └─Projection_76;229414.46;root;;mul(test.lineitem.l_extendedprice, minus(1, test.lineitem.l_discount))->Column#50, test.nation.n_name, test.nation.n_name
+      └─Projection_28;229414.46;root;;test.lineitem.l_extendedprice, test.lineitem.l_discount, test.nation.n_name
+        └─IndexJoin_33;229414.46;root;;inner join, inner:TableReader_30, outer key:test.orders.o_custkey, inner key:test.customer.c_custkey, equal cond:eq(test.orders.o_custkey, test.customer.c_custkey), eq(test.supplier.s_nationkey, test.customer.c_nationkey)
+          ├─IndexJoin_46(Build);228753.75;root;;inner join, inner:TableReader_42, outer key:test.lineitem.l_orderkey, inner key:test.orders.o_orderkey, equal cond:eq(test.lineitem.l_orderkey, test.orders.o_orderkey)
+          │ ├─HashJoin_53(Build);1200243.00;root;;inner join, equal:[eq(test.supplier.s_suppkey, test.lineitem.l_suppkey)]
+          │ │ ├─TableReader_75(Build);6001215.00;root;;data:TableFullScan_74
+          │ │ │ └─TableFullScan_74;6001215.00;cop[tikv];table:lineitem;keep order:false
+          │ │ └─HashJoin_55(Probe);2000.00;root;;inner join, equal:[eq(test.nation.n_nationkey, test.supplier.s_nationkey)]
+          │ │   ├─TableReader_73(Build);10000.00;root;;data:TableFullScan_72
+          │ │   │ └─TableFullScan_72;10000.00;cop[tikv];table:supplier;keep order:false
+          │ │   └─IndexHashJoin_65(Probe);5.00;root;;inner join, inner:TableReader_59, outer key:test.nation.n_regionkey, inner key:test.region.r_regionkey, equal cond:eq(test.nation.n_regionkey, test.region.r_regionkey)
+          │ │     ├─TableReader_71(Build);25.00;root;;data:TableFullScan_70
+          │ │     │ └─TableFullScan_70;25.00;cop[tikv];table:nation;keep order:false
+          │ │     └─TableReader_59(Probe);0.20;root;;data:Selection_58
+          │ │       └─Selection_58;0.20;cop[tikv];;eq(test.region.r_name, "MIDDLE EAST")
+          │ │         └─TableRangeScan_57;1.00;cop[tikv];table:region;range: decided by [test.nation.n_regionkey], keep order:false
+          │ └─TableReader_42(Probe);0.15;root;;data:Selection_41
+          │   └─Selection_41;0.15;cop[tikv];;ge(test.orders.o_orderdate, 1994-01-01 00:00:00.000000), lt(test.orders.o_orderdate, 1995-01-01)
+          │     └─TableRangeScan_40;1.00;cop[tikv];table:orders;range: decided by [test.lineitem.l_orderkey], keep order:false
+          └─TableReader_30(Probe);1.00;root;;data:TableRangeScan_29
+            └─TableRangeScan_29;1.00;cop[tikv];table:customer;range: decided by [test.orders.o_custkey], keep order:false

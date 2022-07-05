@@ -1,0 +1,20 @@
+HashAgg_24;1.00;root;;funcs:min(test.link_type.link)->Column#37, funcs:min(test.title.title)->Column#38, funcs:min(test.title.title)->Column#39
+└─HashJoin_39;286.81;root;;inner join, equal:[eq(test.movie_keyword.keyword_id, test.keyword.id)]
+  ├─TableReader_159(Build);134.17;root;;data:Selection_158
+  │ └─Selection_158;134.17;cop[tikv];;eq(test.keyword.keyword, "character-name-in-title")
+  │   └─TableFullScan_157;134170.00;cop[tikv];table:k;keep order:false
+  └─IndexHashJoin_46(Probe);286241.27;root;;inner join, inner:IndexLookUp_43, outer key:test.title.id, inner key:test.movie_keyword.movie_id, equal cond:eq(test.title.id, test.movie_keyword.movie_id), eq(test.title.id, test.movie_keyword.movie_id)
+    ├─IndexHashJoin_61(Build);30022.64;root;;inner join, inner:TableReader_56, outer key:test.movie_link.linked_movie_id, inner key:test.title.id, equal cond:eq(test.movie_link.linked_movie_id, test.title.id)
+    │ ├─IndexHashJoin_97(Build);30009.82;root;;inner join, inner:TableReader_92, outer key:test.movie_link.movie_id, inner key:test.title.id, equal cond:eq(test.movie_link.movie_id, test.title.id)
+    │ │ ├─HashJoin_140(Build);29997.00;root;;inner join, equal:[eq(test.link_type.id, test.movie_link.link_type_id)]
+    │ │ │ ├─TableReader_148(Build);18.00;root;;data:TableFullScan_147
+    │ │ │ │ └─TableFullScan_147;18.00;cop[tikv];table:lt;keep order:false
+    │ │ │ └─TableReader_150(Probe);29997.00;root;;data:TableFullScan_149
+    │ │ │   └─TableFullScan_149;29997.00;cop[tikv];table:ml;keep order:false
+    │ │ └─TableReader_92(Probe);1.00;root;;data:TableRangeScan_91
+    │ │   └─TableRangeScan_91;1.00;cop[tikv];table:t1;range: decided by [test.movie_link.movie_id], keep order:false
+    │ └─TableReader_56(Probe);1.00;root;;data:TableRangeScan_55
+    │   └─TableRangeScan_55;1.00;cop[tikv];table:t2;range: decided by [test.movie_link.linked_movie_id], keep order:false
+    └─IndexLookUp_43(Probe);9.53;root;;
+      ├─IndexRangeScan_41(Build);9.53;cop[tikv];table:mk, index:movie_id_movie_keyword(movie_id);range: decided by [eq(test.movie_keyword.movie_id, test.title.id)], keep order:false
+      └─TableRowIDScan_42(Probe);9.53;cop[tikv];table:mk;keep order:false

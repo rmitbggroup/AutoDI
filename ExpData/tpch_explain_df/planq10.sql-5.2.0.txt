@@ -1,0 +1,18 @@
+Projection_18;20.00;root;;test.customer.c_custkey, test.customer.c_name, Column#39, test.customer.c_acctbal, test.nation.n_name, test.customer.c_address, test.customer.c_phone, test.customer.c_comment
+└─TopN_21;20.00;root;;Column#39:desc, offset:0, count:20
+  └─HashAgg_26;6068.65;root;;group by:Column#53, Column#54, Column#55, Column#56, Column#57, Column#58, Column#59, funcs:sum(Column#45)->Column#39, funcs:firstrow(Column#46)->test.customer.c_custkey, funcs:firstrow(Column#47)->test.customer.c_name, funcs:firstrow(Column#48)->test.customer.c_address, funcs:firstrow(Column#49)->test.customer.c_phone, funcs:firstrow(Column#50)->test.customer.c_acctbal, funcs:firstrow(Column#51)->test.customer.c_comment, funcs:firstrow(Column#52)->test.nation.n_name
+    └─Projection_73;6068.65;root;;mul(test.lineitem.l_extendedprice, minus(1, test.lineitem.l_discount))->Column#45, test.customer.c_custkey, test.customer.c_name, test.customer.c_address, test.customer.c_phone, test.customer.c_acctbal, test.customer.c_comment, test.nation.n_name, test.customer.c_custkey, test.customer.c_name, test.customer.c_acctbal, test.customer.c_phone, test.nation.n_name, test.customer.c_address, test.customer.c_comment
+      └─Projection_27;6068.65;root;;test.customer.c_custkey, test.customer.c_name, test.customer.c_address, test.customer.c_phone, test.customer.c_acctbal, test.customer.c_comment, test.lineitem.l_extendedprice, test.lineitem.l_discount, test.nation.n_name
+        └─HashJoin_43;6068.65;root;;inner join, equal:[eq(test.orders.o_orderkey, test.lineitem.l_orderkey)]
+          ├─TableReader_67(Build);6001.22;root;;data:Selection_66
+          │ └─Selection_66;6001.22;cop[tikv];;eq(test.lineitem.l_returnflag, "R")
+          │   └─TableFullScan_65;6001215.00;cop[tikv];table:lineitem;keep order:false
+          └─HashJoin_45(Probe);37608.31;root;;inner join, equal:[eq(test.customer.c_custkey, test.orders.o_custkey)]
+            ├─TableReader_64(Build);37500.00;root;;data:Selection_63
+            │ └─Selection_63;37500.00;cop[tikv];;ge(test.orders.o_orderdate, 1993-08-01 00:00:00.000000), lt(test.orders.o_orderdate, 1993-11-01)
+            │   └─TableFullScan_62;1500000.00;cop[tikv];table:orders;keep order:false
+            └─HashJoin_57(Probe);150000.00;root;;inner join, equal:[eq(test.nation.n_nationkey, test.customer.c_nationkey)]
+              ├─TableReader_61(Build);25.00;root;;data:TableFullScan_60
+              │ └─TableFullScan_60;25.00;cop[tikv];table:nation;keep order:false
+              └─TableReader_59(Probe);150000.00;root;;data:TableFullScan_58
+                └─TableFullScan_58;150000.00;cop[tikv];table:customer;keep order:false

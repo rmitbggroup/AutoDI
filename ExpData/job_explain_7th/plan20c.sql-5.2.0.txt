@@ -1,0 +1,41 @@
+HashAgg_44;1.00;root;;funcs:min(test.name.name)->Column#52, funcs:min(test.title.title)->Column#53
+└─Projection_46;200.63;root;;test.name.name, test.title.title
+  └─IndexJoin_52;200.63;root;;inner join, inner:TableReader_49, outer key:test.cast_info.person_id, inner key:test.name.id, equal cond:eq(test.cast_info.person_id, test.name.id)
+    ├─IndexJoin_77(Build);199.11;root;;inner join, inner:TableReader_73, outer key:test.cast_info.person_role_id, inner key:test.char_name.id, equal cond:eq(test.cast_info.person_role_id, test.char_name.id)
+    │ ├─IndexJoin_88(Build);197.80;root;;inner join, inner:IndexLookUp_87, outer key:test.title.id, inner key:test.cast_info.movie_id, equal cond:eq(test.complete_cast.movie_id, test.cast_info.movie_id), eq(test.movie_keyword.movie_id, test.cast_info.movie_id), eq(test.title.id, test.cast_info.movie_id)
+    │ │ ├─IndexJoin_106(Build);12.79;root;;inner join, inner:TableReader_102, outer key:test.movie_keyword.keyword_id, inner key:test.keyword.id, equal cond:eq(test.movie_keyword.keyword_id, test.keyword.id)
+    │ │ │ ├─IndexJoin_116(Build);169593.66;root;;inner join, inner:IndexLookUp_115, outer key:test.title.id, inner key:test.movie_keyword.movie_id, equal cond:eq(test.complete_cast.movie_id, test.movie_keyword.movie_id), eq(test.title.id, test.movie_keyword.movie_id)
+    │ │ │ │ ├─IndexJoin_133(Build);17787.97;root;;inner join, inner:TableReader_129, outer key:test.title.kind_id, inner key:test.kind_type.id, equal cond:eq(test.title.kind_id, test.kind_type.id)
+    │ │ │ │ │ ├─IndexJoin_148(Build);67571.86;root;;inner join, inner:TableReader_144, outer key:test.complete_cast.movie_id, inner key:test.title.id, equal cond:eq(test.complete_cast.movie_id, test.title.id)
+    │ │ │ │ │ │ ├─IndexJoin_188(Build);67543.00;root;;inner join, inner:TableReader_184, outer key:test.complete_cast.status_id, inner key:test.comp_cast_type.id, equal cond:eq(test.complete_cast.status_id, test.comp_cast_type.id)
+    │ │ │ │ │ │ │ ├─HashJoin_206(Build);67543.00;root;;inner join, equal:[eq(test.comp_cast_type.id, test.complete_cast.subject_id)]
+    │ │ │ │ │ │ │ │ ├─TableReader_210(Build);135086.00;root;;data:Selection_209
+    │ │ │ │ │ │ │ │ │ └─Selection_209;135086.00;cop[tikv];;not(isnull(test.complete_cast.movie_id))
+    │ │ │ │ │ │ │ │ │   └─TableFullScan_208;135086.00;cop[tikv];table:cc;keep order:false
+    │ │ │ │ │ │ │ │ └─TableReader_216(Probe);1.00;root;;data:Selection_215
+    │ │ │ │ │ │ │ │   └─Selection_215;1.00;cop[tikv];;eq(test.comp_cast_type.kind, "cast")
+    │ │ │ │ │ │ │ │     └─TableFullScan_214;4.00;cop[tikv];table:cct1;keep order:false
+    │ │ │ │ │ │ │ └─TableReader_184(Probe);0.80;root;;data:Selection_183
+    │ │ │ │ │ │ │   └─Selection_183;0.80;cop[tikv];;like(test.comp_cast_type.kind, "%complete%", 92)
+    │ │ │ │ │ │ │     └─TableRangeScan_182;1.00;cop[tikv];table:cct2;range: decided by [test.complete_cast.status_id], keep order:false
+    │ │ │ │ │ │ └─TableReader_144(Probe);0.54;root;;data:Selection_143
+    │ │ │ │ │ │   └─Selection_143;0.54;cop[tikv];;gt(test.title.production_year, 2000)
+    │ │ │ │ │ │     └─TableRangeScan_142;1.00;cop[tikv];table:t;range: decided by [test.complete_cast.movie_id], keep order:false
+    │ │ │ │ │ └─TableReader_129(Probe);0.14;root;;data:Selection_128
+    │ │ │ │ │   └─Selection_128;0.14;cop[tikv];;eq(test.kind_type.kind, "movie")
+    │ │ │ │ │     └─TableRangeScan_127;1.00;cop[tikv];table:kt;range: decided by [test.title.kind_id], keep order:false
+    │ │ │ │ └─IndexLookUp_115(Probe);9.53;root;;
+    │ │ │ │   ├─IndexRangeScan_113(Build);9.53;cop[tikv];table:mk, index:movie_id_movie_keyword(movie_id);range: decided by [eq(test.movie_keyword.movie_id, test.title.id)], keep order:false
+    │ │ │ │   └─TableRowIDScan_114(Probe);9.53;cop[tikv];table:mk;keep order:false
+    │ │ │ └─TableReader_102(Probe);0.00;root;;data:Selection_101
+    │ │ │   └─Selection_101;0.00;cop[tikv];;in(test.keyword.keyword, "superhero", "marvel-comics", "based-on-comic", "tv-special", "fight", "violence", "magnet", "web", "claw", "laser")
+    │ │ │     └─TableRangeScan_100;1.00;cop[tikv];table:k;range: decided by [test.movie_keyword.keyword_id], keep order:false
+    │ │ └─IndexLookUp_87(Probe);15.46;root;;
+    │ │   ├─IndexRangeScan_84(Build);15.46;cop[tikv];table:ci, index:movie_id_cast_info(movie_id);range: decided by [eq(test.cast_info.movie_id, test.title.id)], keep order:false
+    │ │   └─Selection_86(Probe);15.46;cop[tikv];;not(isnull(test.cast_info.person_role_id))
+    │ │     └─TableRowIDScan_85;15.46;cop[tikv];table:ci;keep order:false
+    │ └─TableReader_73(Probe);0.96;root;;data:Selection_72
+    │   └─Selection_72;0.96;cop[tikv];;or(like(test.char_name.name, "%man%", 92), like(test.char_name.name, "%Man%", 92))
+    │     └─TableRangeScan_71;1.00;cop[tikv];table:chn;range: decided by [test.cast_info.person_role_id], keep order:false
+    └─TableReader_49(Probe);1.00;root;;data:TableRangeScan_48
+      └─TableRangeScan_48;1.00;cop[tikv];table:n;range: decided by [test.cast_info.person_id], keep order:false

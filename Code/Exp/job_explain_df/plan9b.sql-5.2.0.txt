@@ -1,0 +1,33 @@
+HashAgg_39;1.00;root;;funcs:min(test.aka_name.name)->Column#58, funcs:min(test.char_name.name)->Column#59, funcs:min(test.name.name)->Column#60, funcs:min(test.title.title)->Column#61
+└─Projection_41;72645.38;root;;test.aka_name.name, test.char_name.name, test.name.name, test.title.title
+  └─IndexHashJoin_49;72645.38;root;;inner join, inner:TableReader_44, outer key:test.cast_info.person_role_id, inner key:test.char_name.id, equal cond:eq(test.cast_info.person_role_id, test.char_name.id)
+    ├─IndexHashJoin_138(Build);72166.00;root;;inner join, inner:TableReader_132, outer key:test.movie_companies.company_id, inner key:test.company_name.id, equal cond:eq(test.movie_companies.company_id, test.company_name.id)
+    │ ├─IndexHashJoin_149(Build);110472.10;root;;inner join, inner:IndexLookUp_146, outer key:test.title.id, inner key:test.movie_companies.movie_id, equal cond:eq(test.cast_info.movie_id, test.movie_companies.movie_id), eq(test.title.id, test.movie_companies.movie_id)
+    │ │ ├─IndexHashJoin_163(Build);46191.23;root;;inner join, inner:IndexLookUp_160, outer key:test.name.id, inner key:test.aka_name.person_id, equal cond:eq(test.cast_info.person_id, test.aka_name.person_id), eq(test.name.id, test.aka_name.person_id)
+    │ │ │ ├─IndexJoin_178(Build);30039.86;root;;inner join, inner:TableReader_174, outer key:test.cast_info.movie_id, inner key:test.title.id, equal cond:eq(test.cast_info.movie_id, test.title.id)
+    │ │ │ │ ├─IndexJoin_222(Build);30027.03;root;;inner join, inner:TableReader_218, outer key:test.cast_info.person_id, inner key:test.name.id, equal cond:eq(test.cast_info.person_id, test.name.id)
+    │ │ │ │ │ ├─HashJoin_275(Build);683094.00;root;;inner join, equal:[eq(test.role_type.id, test.cast_info.role_id)]
+    │ │ │ │ │ │ ├─TableReader_286(Build);1.00;root;;data:Selection_285
+    │ │ │ │ │ │ │ └─Selection_285;1.00;cop[tikv];;eq(test.role_type.role, "actress")
+    │ │ │ │ │ │ │   └─TableFullScan_284;12.00;cop[tikv];table:rt;keep order:false
+    │ │ │ │ │ │ └─TableReader_289(Probe);683094.00;root;;data:Selection_288
+    │ │ │ │ │ │   └─Selection_288;683094.00;cop[tikv];;eq(test.cast_info.note, "(voice)"), not(isnull(test.cast_info.person_role_id))
+    │ │ │ │ │ │     └─TableFullScan_287;36244344.00;cop[tikv];table:ci;keep order:false
+    │ │ │ │ │ └─TableReader_218(Probe);0.00;root;;data:Selection_217
+    │ │ │ │ │   └─Selection_217;0.00;cop[tikv];;eq(test.name.gender, "f"), like(test.name.name, "%Angel%", 92)
+    │ │ │ │ │     └─TableRangeScan_216;1.00;cop[tikv];table:n;range: decided by [test.cast_info.person_id], keep order:false
+    │ │ │ │ └─TableReader_174(Probe);0.20;root;;data:Selection_173
+    │ │ │ │   └─Selection_173;0.20;cop[tikv];;ge(test.title.production_year, 2007), le(test.title.production_year, 2010)
+    │ │ │ │     └─TableRangeScan_172;1.00;cop[tikv];table:t;range: decided by [test.cast_info.movie_id], keep order:false
+    │ │ │ └─IndexLookUp_160(Probe);1.54;root;;
+    │ │ │   ├─IndexRangeScan_158(Build);1.54;cop[tikv];table:an, index:person_id_aka_name(person_id);range: decided by [eq(test.aka_name.person_id, test.name.id)], keep order:false
+    │ │ │   └─TableRowIDScan_159(Probe);1.54;cop[tikv];table:an;keep order:false
+    │ │ └─IndexLookUp_146(Probe);2.39;root;;
+    │ │   ├─IndexRangeScan_143(Build);3.11;cop[tikv];table:mc, index:movie_id_movie_companies(movie_id);range: decided by [eq(test.movie_companies.movie_id, test.title.id)], keep order:false
+    │ │   └─Selection_145(Probe);2.39;cop[tikv];;like(test.movie_companies.note, "%(200%)%", 92), or(like(test.movie_companies.note, "%(USA)%", 92), like(test.movie_companies.note, "%(worldwide)%", 92))
+    │ │     └─TableRowIDScan_144;3.11;cop[tikv];table:mc;keep order:false
+    │ └─TableReader_132(Probe);0.31;root;;data:Selection_131
+    │   └─Selection_131;0.31;cop[tikv];;eq(test.company_name.country_code, "[us]")
+    │     └─TableRangeScan_130;1.00;cop[tikv];table:cn;range: decided by [test.movie_companies.company_id], keep order:false
+    └─TableReader_44(Probe);1.00;root;;data:TableRangeScan_43
+      └─TableRangeScan_43;1.00;cop[tikv];table:chn;range: decided by [test.cast_info.person_role_id], keep order:false
